@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core.h"
 #include "local_list.h"
 
 constexpr size_t MaxNameLength = 256;
