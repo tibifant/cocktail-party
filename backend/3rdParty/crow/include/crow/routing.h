@@ -1580,7 +1580,7 @@ namespace crow
                     res.set_header("Allow", allow);
 
                     // TODO: THIS IS DODGY AS F*** BUT OTHERWISE CROW REFUSES TO DO THIS... :(
-#ifndef SCHEDD_LOCALHOST
+#ifndef COCKTAILPARTY_LOCALHOST
                     res.set_header("Access-Control-Allow-Origin", SCHEDD_HOSTNAME);
 #else
                     res.set_header("Access-Control-Allow-Origin", "*");
@@ -1613,7 +1613,7 @@ namespace crow
                         res.set_header("Allow", allow);
 
                         // TODO: THIS IS DODGY AS F*** BUT OTHERWISE CROW REFUSES TO DO THIS... :(
-#ifndef SCHEDD_LOCALHOST
+#ifndef COCKTAILPARTY_LOCALHOST
                         res.set_header("Access-Control-Allow-Origin", SCHEDD_HOSTNAME);
 #else
                         res.set_header("Access-Control-Allow-Origin", "*");
