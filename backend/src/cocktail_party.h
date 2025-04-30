@@ -19,7 +19,7 @@ struct cocktail
 {
   char name[MaxNameLength];
   local_list<ingridient, MaxIngridients> ingridients;
-  char author_surname[MaxNameLength];
+  char author_firstname[MaxNameLength];
   char author_lastname[MaxNameLength];
 };
 
