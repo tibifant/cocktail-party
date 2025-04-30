@@ -4,6 +4,7 @@
 #include "local_list.h"
 
 constexpr size_t MaxNameLength = 256;
+constexpr size_t MaxInstructionLength = 1024; //?
 constexpr size_t MaxCocktailCount = 64;
 
 struct ingridient
@@ -19,6 +20,7 @@ struct cocktail
 {
   char name[MaxNameLength];
   local_list<ingridient, MaxIngridients> ingridients;
+  char instructions[MaxInstructionLength];
   char author_firstname[MaxNameLength];
   char author_lastname[MaxNameLength];
 };
