@@ -3,25 +3,22 @@
 #include "core.h"
 #include "local_list.h"
 
-constexpr size_t MaxNameLength = 256;
-constexpr size_t MaxInstructionLength = 1024; //?
 constexpr size_t MaxCocktailCount = 64;
+constexpr size_t MaxIngridients = 16;
 
 struct ingridient
 {
-  char name[MaxNameLength];
+  raw_string name;
   uint8_t amount;
-  char unit[MaxNameLength];
+  raw_string unit;
 };
-
-constexpr size_t MaxIngridients = 16;
 
 struct cocktail
 {
-  char name[MaxNameLength];
+  raw_string name;
+  raw_string author_name;
   local_list<ingridient, MaxIngridients> ingridients;
-  char instructions[MaxInstructionLength];
-  char author_name[MaxNameLength];
+  raw_string instructions;
 };
 
 lsResult add_cocktail();

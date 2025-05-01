@@ -1,12 +1,13 @@
 #include "cocktail_party.h"
 #include "pool.h"
+#include "raw_string.h"
 
 pool<cocktail> Cocktails;
 
 static const char *Units[] =
 { "g", "mg", "kg", "cg", "dg", "hg", "dag", "t", "oz", "lb", "st", "long ton", "short ton", "L", "mL", "m³", "cm³", "dm³", "hL", "dL", "cL", "gal", "qt", "pt", "gi", "min", "bbl", "tsp", "tbsp", "c", "pt", "qt", "gal", "fl oz", "in³", "ft³", "yd³", "whole", "bowl(s)" };
 
-static const char *AuthorFirstnameStrings[] = { "Mamadou", "Judith", "Kenneth", "Mostafa", "Chris", "Helen", "Nikolay", "Rina", "Zhiqiang", "Marcos", "Mária", "Norma", "Anton", "Raul", "Cristina", "Xiaohong", "Henry", "Wai", "Antonia", "Betty", "Alejandro", "Nelson", "Igor", "Evgeniy", "Adriana", "Amir", "Pablo", "Raj", "Regina", "Rajendra", "Brenda", "Linh", "Sani", "Hussein", "Gul", "Mikhail", "Jaime", "Nicole", "Sima", "Giuseppe", "Dinesh", "Tatiana", "Bernard", "Gary", "Lijun", "Sita", "Javier", "Shan", "Hasan", "Yuliya", "Ni", "Moses", "Agnes", "Cesar", "Xiaoli", "Usha", "Alfredo", "Meng", "Jianguo", "Kiran", "Dennis", "Khaled", "Carol", "Rani", "Yusuf", "Xiaoping", "Ha", "Rakesh", "Isaac", "Luiz", "Josephine", "Krishna", "Michael", "Juan", "Anna", "Mary", "Jean", "Robert", "Daniel", "Luis", "Carlos", "James", "Antonio", "Joseph", "Hui", "Elena", "Francisco", "Hong", "Marie", "Andrea", "Christine", "Irina", "Laura", "Linda", "Marina", "Carmen", "Ghulam", "Vladimir", "Barbara", "Angel", "Günther", "Kai", "Rainer" };
+static const char *AuthorFirstnames[] = { "Mamadou", "Judith", "Kenneth", "Mostafa", "Chris", "Helen", "Nikolay", "Rina", "Zhiqiang", "Marcos", "Mária", "Norma", "Anton", "Raul", "Cristina", "Xiaohong", "Henry", "Wai", "Antonia", "Betty", "Alejandro", "Nelson", "Igor", "Evgeniy", "Adriana", "Amir", "Pablo", "Raj", "Regina", "Rajendra", "Brenda", "Linh", "Sani", "Hussein", "Gul", "Mikhail", "Jaime", "Nicole", "Sima", "Giuseppe", "Dinesh", "Tatiana", "Bernard", "Gary", "Lijun", "Sita", "Javier", "Shan", "Hasan", "Yuliya", "Ni", "Moses", "Agnes", "Cesar", "Xiaoli", "Usha", "Alfredo", "Meng", "Jianguo", "Kiran", "Dennis", "Khaled", "Carol", "Rani", "Yusuf", "Xiaoping", "Ha", "Rakesh", "Isaac", "Luiz", "Josephine", "Krishna", "Michael", "Juan", "Anna", "Mary", "Jean", "Robert", "Daniel", "Luis", "Carlos", "James", "Antonio", "Joseph", "Hui", "Elena", "Francisco", "Hong", "Marie", "Andrea", "Christine", "Irina", "Laura", "Linda", "Marina", "Carmen", "Ghulam", "Vladimir", "Barbara", "Angel", "Günther", "Kai", "Rainer" };
 
 static const char *AuthorLastnames[] = { "Wang", "Li", "Zhang", "Chen", "Liu", "Devi", "Yang", "Mohamed", "Islam", "Shi", "Song", "Xie", "Sharif", "Juarez", "Patal", "Kamal", "Jain", "Phiri", "Salah", "Walker", "Akbar", "Clark", "Lewis", "Hosen", "Diarra", "Avila", "Chaudhary", "Chaudhari", "Franco", "Moyo", "Watson", "Hughes", "Ochoa", "Paredes", "Mahmood", "Lozano", "Garcia",
 "Martin", "Müller", "Rodriguez", "Fernandez", "Sanchez", "Perez	", "Ivanov", "Ivanova	", "Schmidt	", "Smith	", "Jones", "Gomez", "Schneider", "Fischer", "Petrov", "Meyer", "Weber", "Thomas", "Ruiz", "Alonso", "Novikova", "Ramos", "Ferrari", "Schmid", "Kravchenko", "Torres", "Sokolova", "Meier", "Navarro", "Roberts", "Gutierrez", "Zimmermann", "Lauch", "Trump", "Stalin", "Jinping", "Nero", "the Hun", "Pinochet", "Honecker", "Napoleon", "Lenin", "Castro", "Mussolini", "Piranha", "Zufall" };
@@ -37,13 +38,20 @@ static const char *InstructionEndings[] = { "Serve cold", "Serve with Lime Juice
 lsResult generate_cocktail()
 {
   // generate name
-  
+
   // generate author
 }
 
-void generate_cocktail_name(_Out_ char *name)
+void generate_cocktail_name(_Out_ cocktail &ccktail)
 {
+  uint64_t rnd = lsGetRand();
+
+  const size_t idxIngridientPrefix = rnd % LS_ARRAYSIZE(IngridientPrefixes);
+  rnd <<= 5;
+
   // choose random prefix
+  string_append(ccktail.name, IngridientPrefixes[idxIngridientPrefix]);
+
   // choose attribute with chance
   // choose random non beverage ingridient
   // choose random prefix
@@ -51,10 +59,26 @@ void generate_cocktail_name(_Out_ char *name)
   // choose either single or prefix attribute with chance (if prefix -> choose ingridient)
 }
 
-void generate_author(_Out_ char *name)
+void generate_author(_Out_ cocktail &ccktail)
 {
+  constexpr uint8_t ChanceSecondName = 20;
+
+  uint64_t rnd = lsGetRand();
+  const size_t idxFirstName = rnd % LS_ARRAYSIZE(AuthorFirstnames);
+  rnd >>= 5;
+  const size_t randChanceSecondName = rnd % 100;
+  rnd >>= 5;
+  const size_t idxSecondName = rnd % LS_ARRAYSIZE(AuthorFirstnames);
+  rnd >>= 5;
+  const size_t idxLastName = rnd % LS_ARRAYSIZE(AuthorLastnames);
+
   // choose random first name
+  string_append(ccktail.author_name, AuthorFirstnames[idxFirstName]);
+
   // choose second name with chance
-  // choose third name with chance
+  if (randChanceSecondName < ChanceSecondName)
+    string_append(ccktail.author_name, AuthorFirstnames[idxSecondName]);
+
   // choose random lastname
+  string_append(ccktail.author_name, AuthorLastnames[idxLastName]);
 }
