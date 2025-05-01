@@ -37,11 +37,24 @@ static const char *InstructionEndings[] = { "Serve cold", "Serve with Lime Juice
 lsResult generate_cocktail()
 {
   // generate name
-    // choose random prefix
-    // choose attribute with chance
-    // choose random non beverage ingridient
-    // choose random prefix
-    // choose random beverage
-    // choose either single or prefix attribute with chance (if prefix -> choose ingridient)
+  
+  // generate author
+}
 
+void generate_cocktail_name(_Out_ char *name)
+{
+  // choose random prefix
+  // choose attribute with chance
+  // choose random non beverage ingridient
+  // choose random prefix
+  // choose random beverage
+  // choose either single or prefix attribute with chance (if prefix -> choose ingridient)
+}
+
+void generate_author(_Out_ char *name)
+{
+  // choose random first name
+  // choose second name with chance
+  // choose third name with chance
+  // choose random lastname
 }
