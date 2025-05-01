@@ -25,10 +25,23 @@ static const char *CocktailAttributesPrefix[] = { "á la", "de" };
 
 static const char *Instructions[] = { "Measure", "Peel", "Slice", "Infuse", "Ground", "Blend", "Grate", "Half", "Drink", "Eat", "Mash", "Stir", "Chop", "Shake", "Dice", "Cook", "Reduce", "Boil", "Puree", "Mix", "Toss", "Grill", "Sauté", "Roast", "Steam", "Deglaze", "Smoke", "Toast", "Juice", "Zest", "Whisk", "Open", "Caramelize" };
 
-static const char *SingleInstructions[] = { "Cool to absolute Zero", "Mix with Ice 3", "Heat to 90°", "Bake for 20 minutes", "Bring to a boil", "Reduce to half", "Deglaze the pan", "Add a pinch of Salt", "Shake the mixture", "Let it sit for 1 hour", "Cool down to room temperature", "Refrigerate over night" };
+static const char *SingleInstructions[] = { "Cool to absolute Zero", "Mix with Ice 3", "Heat to 90°", "Bake for 20 minutes", "Bring to a boil", "Reduce to half", "Deglaze the pan", "Add a pinch of Salt", "Shake the mixture", "Let it sit for 1 hour", "Cool down to room temperature", "Refrigerate over night", "Precool the glass" };
 
 static const char *InstructionAdverbs[] = { "with", "using", "atop", "in front of", "in" };
 
 static const char *CookingUtensils[] = { "Pan", "Oven", "Mixer", "Shaker", "Knive", "Grater", "Stove", "Whisk", "Blender", "Spoon", "Fork", "Glass", "Corkscrew", "Can openener", "Cutting Board", "Skillet", "Baking Sheet", "Pie Dish" };
 
-static const char *InsturctionEndings[] = { "Serve cold", "Serve with Lime Juice", "Serve immediately", "Immediately serve in a Mug", "Enjoy", "Pour into a Martini Glass and serve", "Garnish with an Olive and serve", "Serve while stirring thoroughly", "Serve on Ice", "Serve warm", "Serve on a warm summer night", "Enjoy with friends", "Bon Appetit" };
+static const char *InstructionEndings[] = { "Serve cold", "Serve with Lime Juice", "Serve immediately", "Immediately serve in a Mug", "Enjoy", "Pour into a Martini Glass and serve", "Garnish with an Olive and serve", "Serve while stirring thoroughly", "Serve on Ice", "Serve warm", "Serve on a warm summer night", "Enjoy with friends", "Bon Appetit", "Decorate with an Cocktail Umbrella and serve" };
+
+
+lsResult generate_cocktail()
+{
+  // generate name
+    // choose random prefix
+    // choose attribute with chance
+    // choose random non beverage ingridient
+    // choose random prefix
+    // choose random beverage
+    // choose either single or prefix attribute with chance (if prefix -> choose ingridient)
+
+}

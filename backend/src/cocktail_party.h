@@ -21,11 +21,10 @@ struct cocktail
   char name[MaxNameLength];
   local_list<ingridient, MaxIngridients> ingridients;
   char instructions[MaxInstructionLength];
-  char author_firstname[MaxNameLength];
-  char author_lastname[MaxNameLength];
+  char author_name[MaxNameLength];
 };
 
-lsResult generate_cocktail();
+lsResult add_cocktail();
 lsResult update_cocktail(const size_t cocktail_id, const cocktail updated_cocktail);
 lsResult remove_cocktail(const size_t cocktail_id);
 
