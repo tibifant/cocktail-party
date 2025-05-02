@@ -1,6 +1,5 @@
 #include "cocktail_party.h"
 #include "pool.h"
-#include "raw_string.h"
 
 pool<cocktail> Cocktails;
 
@@ -44,13 +43,16 @@ lsResult generate_cocktail()
 
 void generate_cocktail_name(_Out_ raw_string &name)
 {
+  constexpr size_t ChanceIngridientAttribute = 40;
+  constexpr size_t ChanceCocktailAttribute = 8;
+
   uint64_t rnd = lsGetRand();
 
   const size_t idxIngridientPrefixA = rnd % LS_ARRAYSIZE(IngridientPrefixes);
   rnd >>= 5;
-  const size_t chanceIngridientAttributeA = rnd % 100;
+  const size_t randChanceIngridientAttribute = rnd % 100;
   rnd >>= 5;
-  const size_t ingridientAttributeIdx = rnd % LS_ARRAYSIZE(NonBeverageAttributes);
+  const size_t idxIngridientAttribute = rnd % LS_ARRAYSIZE(NonBeverageAttributes);
   rnd >>= 5;
   const size_t idxNonBeverage = rnd % LS_ARRAYSIZE(NonBeverages);
   rnd >>= 5;
@@ -58,16 +60,45 @@ void generate_cocktail_name(_Out_ raw_string &name)
   rnd >>= 5;
   const size_t idxBeverage = rnd % LS_ARRAYSIZE(Beverages);
   rnd >>= 5;
-
+  const size_t randChanceCocktailAttribute = rnd % 100;
 
   // choose random prefix
   string_append(name, IngridientPrefixes[idxIngridientPrefixA]);
 
   // choose attribute with chance
+  if (randChanceIngridientAttribute < ChanceIngridientAttribute)
+    string_append(name, NonBeverageAttributes[idxIngridientAttribute]);
+
   // choose random non beverage ingridient
+  string_append(name, NonBeverages[idxNonBeverage]);
+
   // choose random prefix
+  string_append(name, IngridientPrefixes[idxIngridientPrefixB]);
+  
   // choose random beverage
+  string_append(name, NonBeverages[idxBeverage]);
+  
   // choose either single or prefix attribute with chance (if prefix -> choose ingridient)
+  if (randChanceCocktailAttribute < ChanceCocktailAttribute)
+  {
+    rnd >>= 5;
+    const bool chanceCocktailAttributeSingle = rnd & 1ULL;
+
+    if (chanceCocktailAttributeSingle)
+    {
+      const size_t idxCocktailAttribute = rnd % LS_ARRAYSIZE(CocktailAttributesSingle);
+      string_append(name, CocktailAttributesSingle[idxCocktailAttribute]);
+    }
+    else
+    {
+      const size_t idxCocktailAttribute = rnd % LS_ARRAYSIZE(CocktailAttributesPrefix);
+      rnd <<= 5;
+      const size_t idxNonBeverageB = rnd % LS_ARRAYSIZE(NonBeverages);
+
+      string_append(name, CocktailAttributesPrefix[idxCocktailAttribute]);
+      string_append(name, NonBeverages[idxNonBeverageB]);
+    }
+  }
 }
 
 void generate_author(_Out_ raw_string &name)

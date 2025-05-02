@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <exception>
 
+#include "cocktail_party.h"
+
 #define ASIO_STANDALONE 1
 #define ASIO_NO_EXCEPTIONS 1
 
@@ -66,4 +68,8 @@ int32_t main(void)
 
 //////////////////////////////////////////////////////////////////////////
 
+#include "raw_string.h"
 
+raw_string test;
+generate_cocktail_name(test);
+print(test);

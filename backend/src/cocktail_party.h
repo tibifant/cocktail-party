@@ -2,6 +2,7 @@
 
 #include "core.h"
 #include "local_list.h"
+#include "raw_string.h"
 
 constexpr size_t MaxCocktailCount = 64;
 constexpr size_t MaxIngridients = 16;
@@ -26,3 +27,5 @@ lsResult update_cocktail(const size_t cocktail_id, const cocktail updated_cockta
 lsResult remove_cocktail(const size_t cocktail_id);
 
 lsResult get_cocktails(_Out_ local_list<cocktail, MaxCocktailCount> &cocktails);
+
+void generate_cocktail_name(_Out_ raw_string &name);
