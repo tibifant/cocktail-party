@@ -42,15 +42,26 @@ lsResult generate_cocktail()
   // generate author
 }
 
-void generate_cocktail_name(_Out_ cocktail &ccktail)
+void generate_cocktail_name(_Out_ raw_string &name)
 {
   uint64_t rnd = lsGetRand();
 
-  const size_t idxIngridientPrefix = rnd % LS_ARRAYSIZE(IngridientPrefixes);
-  rnd <<= 5;
+  const size_t idxIngridientPrefixA = rnd % LS_ARRAYSIZE(IngridientPrefixes);
+  rnd >>= 5;
+  const size_t chanceIngridientAttributeA = rnd % 100;
+  rnd >>= 5;
+  const size_t ingridientAttributeIdx = rnd % LS_ARRAYSIZE(NonBeverageAttributes);
+  rnd >>= 5;
+  const size_t idxNonBeverage = rnd % LS_ARRAYSIZE(NonBeverages);
+  rnd >>= 5;
+  const size_t idxIngridientPrefixB = rnd % LS_ARRAYSIZE(IngridientPrefixes);
+  rnd >>= 5;
+  const size_t idxBeverage = rnd % LS_ARRAYSIZE(Beverages);
+  rnd >>= 5;
+
 
   // choose random prefix
-  string_append(ccktail.name, IngridientPrefixes[idxIngridientPrefix]);
+  string_append(name, IngridientPrefixes[idxIngridientPrefixA]);
 
   // choose attribute with chance
   // choose random non beverage ingridient
@@ -59,7 +70,7 @@ void generate_cocktail_name(_Out_ cocktail &ccktail)
   // choose either single or prefix attribute with chance (if prefix -> choose ingridient)
 }
 
-void generate_author(_Out_ cocktail &ccktail)
+void generate_author(_Out_ raw_string &name)
 {
   constexpr uint8_t ChanceSecondName = 20;
 
@@ -73,12 +84,12 @@ void generate_author(_Out_ cocktail &ccktail)
   const size_t idxLastName = rnd % LS_ARRAYSIZE(AuthorLastnames);
 
   // choose random first name
-  string_append(ccktail.author_name, AuthorFirstnames[idxFirstName]);
+  string_append(name, AuthorFirstnames[idxFirstName]);
 
   // choose second name with chance
   if (randChanceSecondName < ChanceSecondName)
-    string_append(ccktail.author_name, AuthorFirstnames[idxSecondName]);
+    string_append(name, AuthorFirstnames[idxSecondName]);
 
   // choose random lastname
-  string_append(ccktail.author_name, AuthorLastnames[idxLastName]);
+  string_append(name, AuthorLastnames[idxLastName]);
 }
