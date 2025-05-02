@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <exception>
 
-#include "cocktail_party.h"
-
 #define ASIO_STANDALONE 1
 #define ASIO_NO_EXCEPTIONS 1
 
@@ -46,12 +44,31 @@ namespace asio
 
 //////////////////////////////////////////////////////////////////////////
 
+#include "cocktail_party.h"
+#include "sformat.h"
+#include "raw_string.h"
+
+//////////////////////////////////////////////////////////////////////////
+
 std::atomic<bool> _IsRunning = true;
 
 //////////////////////////////////////////////////////////////////////////
 
 int32_t main(void)
 {
+  //for (size_t i = 0; i < 32; i++)
+  //{
+  //  raw_string name;
+  //  generate_cocktail_name(name);
+  //  raw_string author;
+  //  generate_author(author);
+  //  print(name.text, " by ", author.text, '\n');
+  //}
+
+  raw_string test;
+  generate_ingridients(test);
+  print(test.text);
+
   crow::App<crow::CORSHandler> app;
 
   auto &cors = app.get_middleware<crow::CORSHandler>();
@@ -68,8 +85,3 @@ int32_t main(void)
 
 //////////////////////////////////////////////////////////////////////////
 
-#include "raw_string.h"
-
-raw_string test;
-generate_cocktail_name(test);
-print(test);

@@ -15,7 +15,7 @@ static const char *IngridientPrefixes[] = { "Aged", "Amber", "Black", "Blonde", 
 
 static const char *NonBeverageAttributes[] = { "horned", "organic", "pickled", "juicy", "wild", "spiced", "nutty", "spicy", "peeled", "ground", "frozen", "caramelized" };
 
-static const char *NonBeverages[] = { "Apple", "Banana", "Orange", "Grape", "Lemon", "Lime", "Cherry", "Peach", "Pear", "Pineapple", "Plum", "Strawberry", "Blueberry", "Raspberry", "Blackberry", "Watermelon", "Cantaloupe", "Honeydew", "Kiwi", "Mango", "Papaya", "Guava", "Passion fruit", "Dragon fruit", "Lychee", "Rambutan", "Durian", "Jackfruit", "Starfruit", "Coconut", "Starfruit", "Soursop", "Cherimoya", "Sapote", "Longan", "Mangosteen", "Pitaya", "Acerola", "Tamarind", "Breadfruit", "Grapefruit", "Tangerine", "Clementine", "Mandarin", "Pomelo", "Ugli fruit", "Bergamot", "Kumquat", "Yuzu", "Calamondin", "Cranberry", "Gooseberry", "Boysenberry", "Loganberry", "Mulberry", "Elderberry", "Huckleberry", "Salal berry", "Cloudberry", "Sea buckthorn", "Apricot", "Nectarine", "Plumcot", "Aprium", "Peento", "Sloe", "Damson", "Mirabelle", "Greengage", "Salak", "Melon", "Casaba", "Canary", "Crenshaw", "Galia", "Honeydew", "Santa Claus", "Snake", "Sugar Baby", "Tigger", "Akee", "Atemoya", "Custard apple", "Feijoa", "Raisin", "Prune", "Apricot", "Fig", "Date", "Cranberry", "Apple", "Pear", "Mango", "Pineapple", "Carrot", "Potato", "Tomato", "Cucumber", "Lettuce", "Spinach", "Broccoli", "Cauliflower", "Cabbage", "Bell pepper", "Onion", "Garlic", "Zucchini", "Eggplant", "Green bean", "Pea", "Corn", "Radish", "Celery", "Beet", "Kale", "Swiss chard", "Collard greens", "Arugula", "Bok choy", "Endive", "Escarole", "Fennel", "Mustard greens", "Turnip greens", "Sweet potato", "Parsnip", "Turnip", "Rutabaga", "Ginger", "Horseradish", "Jicama", "Daikon", "Burdock", "Celeriac", "Brussels sprouts", "Kale", "Cabbage", "Broccoli rabe", "Kohlrabi", "Radicchio", "Watercress", "Butternut squash", "Acorn squash", "Spaghetti squash", "Pumpkin", "Delicata squash", "Hubbard squash", "Turban squash", "Leek", "Shallot", "Chive", "Green onion", "Ramps", "Elephant garlic", "Tomatillo", "Poblano pepper", "Jalapeño pepper", "Habanero pepper", "Eggplant", "Ground cherry", "Okra", "Artichoke", "Fiddlehead ferns", "Nopales", "Kohlrabi", "Daikon", "Jicama", "Lotus root", "Bitter melon", "Chinese eggplant", "Button mushroom", "Cremini mushroom", "Portobello mushroom", "Shiitake mushroom", "Oyster mushroom", "Enoki mushroom", "Maitake mushroom", "Chanterelle mushroom", "Morel mushroom", "Truffle", "Basil", "Parsley", "Cilantro", "Dill", "Rosemary", "Thyme", "Oregano", "Sage", "Tarragon", "Chives", "Snow pea", "Sugar snap pea", "Fava bean", "Lima bean", "Black-eyed pea", "Chickpea", "Lentil", "Almond", "Cashew", "Hazelnut", "Peanut", "Pecan", "Pistachio", "Walnut", "Chestnut", "Macadamia", "Pine nut", "Apple Pie", "Cupcake", "Caramel", "Honey", "Raisin", "Vanilla", "Pepper" };
+static const char *NonBeverages[] = { "Apple", "Banana", "Orange", "Grape", "Lemon", "Lime", "Cherry", "Peach", "Pear", "Pineapple", "Plum", "Strawberry", "Blueberry", "Raspberry", "Blackberry", "Watermelon", "Cantaloupe", "Honeydew", "Kiwi", "Mango", "Papaya", "Guava", "Passion fruit", "Dragon fruit", "Lychee", "Rambutan", "Durian", "Jackfruit", "Starfruit", "Coconut", "Starfruit", "Soursop", "Cherimoya", "Sapote", "Longan", "Mangosteen", "Pitaya", "Acerola", "Tamarind", "Breadfruit", "Grapefruit", "Tangerine", "Clementine", "Mandarin", "Pomelo", "Ugli fruit", "Bergamot", "Kumquat", "Yuzu", "Calamondin", "Cranberry", "Gooseberry", "Boysenberry", "Loganberry", "Mulberry", "Elderberry", "Huckleberry", "Salal berry", "Cloudberry", "Sea buckthorn", "Apricot", "Nectarine", "Plumcot", "Aprium", "Peento", "Sloe", "Damson", "Mirabelle", "Greengage", "Salak", "Melon", "Casaba", "Canary", "Crenshaw", "Galia", "Honeydew", "Santa Claus", "Snake", "Sugar Baby", "Tigger", "Akee", "Atemoya", "Custard apple", "Feijoa", "Raisin", "Prune", "Apricot", "Fig", "Date", "Cranberry", "Apple", "Pear", "Mango", "Pineapple", "Carrot", "Potato", "Tomato", "Cucumber", "Lettuce", "Spinach", "Broccoli", "Cauliflower", "Cabbage", "Bell pepper", "Onion", "Garlic", "Zucchini", "Eggplant", "Green bean", "Pea", "Corn", "Radish", "Celery", "Beet", "Kale", "Swiss chard", "Collard greens", "Arugula", "Bok choy", "Endive", "Escarole", "Fennel", "Mustard greens", "Turnip greens", "Sweet potato", "Parsnip", "Turnip", "Rutabaga", "Ginger", "Horseradish", "Jicama", "Daikon", "Burdock", "Celeriac", "Brussels sprouts", "Kale", "Cabbage", "Broccoli rabe", "Kohlrabi", "Radicchio", "Watercress", "Butternut squash", "Acorn squash", "Spaghetti squash", "Pumpkin", "Delicata squash", "Hubbard squash", "Turban squash", "Leek", "Shallot", "Chive", "Green onion", "Ramps", "Elephant garlic", "Tomatillo", "Poblano pepper", "Jalapeño pepper", "Habanero pepper", "Eggplant", "Ground cherry", "Okra", "Artichoke", "Fiddlehead ferns", "Nopales", "Kohlrabi", "Daikon", "Jicama", "Lotus root", "Bitter melon", "Chinese eggplant", "Button mushroom", "Cremini mushroom", "Portobello mushroom", "Shiitake mushroom", "Oyster mushroom", "Enoki mushroom", "Maitake mushroom", "Chanterelle mushroom", "Morel mushroom", "Truffle", "Basil", "Parsley", "Cilantro", "Dill", "Rosemary", "Thyme", "Oregano", "Sage", "Tarragon", "Chives", "Snow pea", "Sugar snap pea", "Fava bean", "Lima bean", "Black-eyed pea", "Chickpea", "Lentil", "Almond", "Cashew", "Hazelnut", "Peanut", "Pecan", "Pistachio", "Walnut", "Chestnut", "Macadamia", "Pine nut", "Apple Pie", "Cupcake", "Caramel", "Honey", "Raisin", "Vanilla", "Pepper", "Salt", "Black Pepper", "Garlic Powder", "Onion Powder", "Paprika", "Cumin", "Coriander", "Turmeric", "Chili Powder", "Oregano", "Basil", "Thyme", "Rosemary", "Sage", "Cinnamon", "Nutmeg", "Cloves", "Allspice", "Ginger", "Mustard Powder", "Cardamom", "Fennel", "Star Anise", "Anise", "Fenugreek", "Mustard", "Cayenne", "Red Pepper Flakes", "White Pepper", "Green Peppercorns", "Dill", "Parsley", "Mint", "Lemon Grass", "Lemon Zest", "Lime Zest" };
 
 static const char *Beverages[] = { "Water", "Coffee", "Tea", "Milk", "Buttermilk", "Juice", "Soda", "Cola", "Ginger Ale", "Water", "Lemonade", "Iced tea", "Hot chocolate", "Smoothie", "Hot cocoa", "Chai", "Horchata", "Kombucha", "Matcha", "Mate", "Beer", "Wine", "Champagne", "Vodka", "Gin", "Rum", "Tequila", "Whiskey", "Bourbon", "Scotch", "Brandy", "Cognac", "Absinthe", "Mezcal", "Sake", "Pisco", "Ouzo", "Raki", "Soju", "Baijiu", "Cachaça", "Poire Williams", "Liqueur", "Armagnac", "Calvados", "Triple Sec", "Rosé", "Soy Sauce", "Terriyaki", "White Wine", "Red Wine", "Prosecco", "Sherry", "Port Wine", "Merlot", "Cider", "Jenever", "Shochu", "Moonshine", "Korn", "Maotai", "Grappa", "Himbeergeist", "Kefir", "Ayran", "Schnapps", "Syrup", "Cointreau", "Limoncello", "Umeshu", "Grand Manier", "Pastis", "Amaretto", "Mist" };
 
@@ -31,20 +31,12 @@ static const char *InstructionAdverbs[] = { "with", "using", "atop", "in front o
 
 static const char *CookingUtensils[] = { "Pan", "Oven", "Mixer", "Shaker", "Knive", "Grater", "Stove", "Whisk", "Blender", "Spoon", "Fork", "Glass", "Corkscrew", "Can openener", "Cutting Board", "Skillet", "Baking Sheet", "Pie Dish" };
 
-static const char *InstructionEndings[] = { "Serve cold", "Serve with Lime Juice", "Serve immediately", "Immediately serve in a Mug", "Enjoy", "Pour into a Martini Glass and serve", "Garnish with an Olive and serve", "Serve while stirring thoroughly", "Serve on Ice", "Serve warm", "Serve on a warm summer night", "Enjoy with friends", "Bon Appetit", "Decorate with an Cocktail Umbrella and serve" };
-
-
-lsResult generate_cocktail()
-{
-  // generate name
-
-  // generate author
-}
+static const char *InstructionEndings[] = { "Serve cold.", "Serve with Lime Juice.", "Serve immediately!", "Immediately serve in a Mug.", "Enjoy!", "Pour into a Martini Glass and serve.", "Garnish with an Olive and serve.", "Serve while stirring thoroughly.", "Serve on Ice.", "Serve warm.", "Serve on a warm summer night.", "Enjoy with friends!", "Bon Appetit!", "Decorate with an Cocktail Umbrella and serve." };
 
 void generate_cocktail_name(_Out_ raw_string &name)
 {
   constexpr size_t ChanceIngridientAttribute = 40;
-  constexpr size_t ChanceCocktailAttribute = 8;
+  constexpr size_t ChanceCocktailAttribute = 10;
 
   uint64_t rnd = lsGetRand();
 
@@ -64,25 +56,33 @@ void generate_cocktail_name(_Out_ raw_string &name)
 
   // choose random prefix
   string_append(name, IngridientPrefixes[idxIngridientPrefixA]);
+  string_append(name, " ");
 
   // choose attribute with chance
   if (randChanceIngridientAttribute < ChanceIngridientAttribute)
+  {
     string_append(name, NonBeverageAttributes[idxIngridientAttribute]);
+    string_append(name, " ");
+  }
 
   // choose random non beverage ingridient
   string_append(name, NonBeverages[idxNonBeverage]);
+  string_append(name, " ");
 
   // choose random prefix
   string_append(name, IngridientPrefixes[idxIngridientPrefixB]);
-  
+  string_append(name, " ");
+
   // choose random beverage
-  string_append(name, NonBeverages[idxBeverage]);
-  
+  string_append(name, Beverages[idxBeverage]);
+
   // choose either single or prefix attribute with chance (if prefix -> choose ingridient)
   if (randChanceCocktailAttribute < ChanceCocktailAttribute)
   {
     rnd >>= 5;
     const bool chanceCocktailAttributeSingle = rnd & 1ULL;
+
+    string_append(name, " ");
 
     if (chanceCocktailAttributeSingle)
     {
@@ -96,6 +96,7 @@ void generate_cocktail_name(_Out_ raw_string &name)
       const size_t idxNonBeverageB = rnd % LS_ARRAYSIZE(NonBeverages);
 
       string_append(name, CocktailAttributesPrefix[idxCocktailAttribute]);
+      string_append(name, " ");
       string_append(name, NonBeverages[idxNonBeverageB]);
     }
   }
@@ -116,11 +117,78 @@ void generate_author(_Out_ raw_string &name)
 
   // choose random first name
   string_append(name, AuthorFirstnames[idxFirstName]);
+  string_append(name, " ");
 
   // choose second name with chance
   if (randChanceSecondName < ChanceSecondName)
+  {
     string_append(name, AuthorFirstnames[idxSecondName]);
+    string_append(name, " ");
+  }
 
   // choose random lastname
   string_append(name, AuthorLastnames[idxLastName]);
+}
+
+void generate_ingridients(_Out_ raw_string &ingridients)
+{
+  constexpr size_t MaxIngridients = 16;
+  constexpr size_t MaxAmount = 200;
+  constexpr size_t BeverageChance = 40;
+  constexpr size_t NonBeverageAttributesChance = 10;
+
+  const size_t ingridientCount = (lsGetRand() % (MaxIngridients - 1)) + 1;
+
+  for (size_t i = 0; i < ingridientCount; i++)
+  {
+    uint64_t rnd = lsGetRand();
+
+    const size_t amount = rnd % MaxAmount;
+    rnd >>= 5;
+
+    const size_t idxUnit = rnd % LS_ARRAYSIZE(Units);
+    rnd >>= 5;
+
+    const size_t chanceBeverage = rnd % 100;
+    rnd >>= 5;
+
+    // choose amount
+    string_append(ingridients, sformat(amount));
+    string_append(ingridients, " ");
+
+    // choose unit
+    string_append(ingridients, Units[idxUnit]);
+    string_append(ingridients, " ");
+
+
+    // choose ingridient
+    if (chanceBeverage < BeverageChance)
+    {
+      const size_t idxBeverage = rnd % LS_ARRAYSIZE(Beverages);
+
+      string_append(ingridients, Beverages[idxBeverage]);
+    }
+    else
+    {
+      const size_t chanceNonBeverageAttribute = rnd % 100;
+      rnd >>= 5;
+
+      const size_t idxNonBeverageAttributes = rnd % LS_ARRAYSIZE(NonBeverageAttributes);
+      rnd >>= 5;
+
+      const size_t idxNonBeverage = rnd % LS_ARRAYSIZE(NonBeverages);
+
+      // choose prefix with chance
+      if (chanceNonBeverageAttribute < NonBeverageAttributesChance)
+      {
+        string_append(ingridients, NonBeverageAttributes[idxNonBeverageAttributes]);
+        string_append(ingridients, " ");
+      }
+      
+      string_append(ingridients, NonBeverages[idxNonBeverage]);
+    }
+
+    if (i < ingridientCount - 1)
+      string_append(ingridients, "\n");
+  }
 }
