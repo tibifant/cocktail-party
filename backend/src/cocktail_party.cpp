@@ -25,13 +25,13 @@ static const char *CocktailAttributesPrefix[] = { "á la", "de" };
 
 static const char *Instructions[] = { "Measure", "Peel", "Slice", "Infuse", "Ground", "Blend", "Grate", "Half", "Drink", "Eat", "Mash", "Stir", "Chop", "Shake", "Dice", "Cook", "Reduce", "Boil", "Puree", "Mix", "Toss", "Grill", "Sauté", "Roast", "Steam", "Deglaze", "Smoke", "Toast", "Juice", "Zest", "Whisk", "Open", "Caramelize" };
 
-static const char *SingleInstructions[] = { "Cool to absolute Zero", "Mix with Ice 3", "Heat to 90°", "Bake for 20 minutes", "Bring to a boil", "Reduce to half", "Deglaze the pan", "Add a pinch of Salt", "Shake the mixture", "Let it sit for 1 hour", "Cool down to room temperature", "Refrigerate over night", "Precool the glass" };
+static const char *SingleInstructions[] = { "Cool to absolute Zero.", "Mix with Ice 3.", "Heat to 90°C.", "Bake for 20 minutes.", "Bring to a boil.", "Reduce to half.", "Deglaze the pan.", "Add a pinch of Salt.", "Shake the mixture.", "Let it sit for 1 hour.", "Cool down to room temperature.", "Refrigerate over night.", "Precool the glass." };
 
 static const char *InstructionAdverbs[] = { "with", "using", "atop", "in front of", "in" };
 
 static const char *CookingUtensils[] = { "Pan", "Oven", "Mixer", "Shaker", "Knive", "Grater", "Stove", "Whisk", "Blender", "Spoon", "Fork", "Glass", "Corkscrew", "Can openener", "Cutting Board", "Skillet", "Baking Sheet", "Pie Dish" };
 
-static const char *InstructionEndings[] = { "Serve cold.", "Serve with Lime Juice.", "Serve immediately!", "Immediately serve in a Mug.", "Enjoy!", "Pour into a Martini Glass and serve.", "Garnish with an Olive and serve.", "Serve while stirring thoroughly.", "Serve on Ice.", "Serve warm.", "Serve on a warm summer night.", "Enjoy with friends!", "Bon Appetit!", "Decorate with an Cocktail Umbrella and serve." };
+static const char *InstructionEndings[] = { "Serve cold.", "Serve with Lime Juice.", "Serve immediately!", "Immediately serve in a Mug.", "Enjoy!", "Pour into a Martini Glass and serve.", "Garnish with an Olive and serve.", "Serve while stirring thoroughly.", "Serve on Ice.", "Serve warm.", "Serve on a warm summer night.", "Enjoy with friends!", "Bon Appetit!", "Decorate with a Cocktail Umbrella and serve." };
 
 void generate_cocktail_name(_Out_ raw_string &name)
 {
@@ -132,7 +132,7 @@ void generate_author(_Out_ raw_string &name)
 
 void generate_ingridients(_Out_ raw_string &ingridients)
 {
-  constexpr size_t MaxIngridients = 16;
+  constexpr size_t MaxIngridients = 12;
   constexpr size_t MaxAmount = 200;
   constexpr size_t BeverageChance = 40;
   constexpr size_t NonBeverageAttributesChance = 10;
@@ -160,7 +160,6 @@ void generate_ingridients(_Out_ raw_string &ingridients)
     string_append(ingridients, Units[idxUnit]);
     string_append(ingridients, " ");
 
-
     // choose ingridient
     if (chanceBeverage < BeverageChance)
     {
@@ -184,11 +183,108 @@ void generate_ingridients(_Out_ raw_string &ingridients)
         string_append(ingridients, NonBeverageAttributes[idxNonBeverageAttributes]);
         string_append(ingridients, " ");
       }
-      
+
       string_append(ingridients, NonBeverages[idxNonBeverage]);
     }
 
     if (i < ingridientCount - 1)
       string_append(ingridients, "\n");
   }
+}
+
+void generate_instructions(_Out_ raw_string &instructions)
+{
+  constexpr size_t MaxInstructions = 12;
+  constexpr size_t SingleInstructionChance = 30;
+  constexpr size_t BeverageChance = 40;
+  constexpr size_t NonBeverageAttributesChance = 10;
+  constexpr size_t AdverbChance = 40;
+
+  uint64_t rnd = lsGetRand();
+
+  const size_t instructionCount = (rnd % (MaxInstructions - 1)) + 1;
+  rnd >>= 5;
+
+  const size_t idxEndInstruction = rnd % LS_ARRAYSIZE(InstructionEndings);
+
+  for (size_t i = 0; i < instructionCount; i++)
+  {
+    uint64_t rndInner = lsGetRand();
+
+    const size_t chanceSingleInstuction = rndInner % 100;
+    rndInner >>= 5;
+
+    // choose single instruction with chance
+    if (chanceSingleInstuction < SingleInstructionChance)
+    {
+      const size_t idxSingleInstruction = rndInner % LS_ARRAYSIZE(SingleInstructions);
+
+      string_append(instructions, SingleInstructions[idxSingleInstruction]);
+    }
+    else
+    {
+      const size_t idxInstruction = rndInner % LS_ARRAYSIZE(Instructions);
+      rndInner >>= 5;
+
+      const size_t chanceBeverage = rnd % 100;
+      rndInner >>= 5;
+
+      // choose instruction
+      string_append(instructions, Instructions[idxInstruction]);
+      string_append(instructions, " the ");
+
+      // choose ingridient
+      if (chanceBeverage < BeverageChance)
+      {
+        const size_t idxBeverage = rndInner % LS_ARRAYSIZE(Beverages);
+
+        string_append(instructions, Beverages[idxBeverage]);
+      }
+      else
+      {
+        const size_t chanceNonBeverageAttribute = rndInner % 100;
+        rndInner >>= 5;
+
+        const size_t idxNonBeverageAttributes = rndInner % LS_ARRAYSIZE(NonBeverageAttributes);
+        rndInner >>= 5;
+
+        const size_t idxNonBeverage = rndInner % LS_ARRAYSIZE(NonBeverages);
+
+        // choose prefix with chance
+        if (chanceNonBeverageAttribute < NonBeverageAttributesChance)
+        {
+          string_append(instructions, NonBeverageAttributes[idxNonBeverageAttributes]);
+          string_append(instructions, " ");
+        }
+
+        string_append(instructions, NonBeverages[idxNonBeverage]);
+      }
+
+      const size_t chanceAdverb = rndInner % 100;
+      rndInner >>= 5;
+
+      if (chanceAdverb < AdverbChance)
+      {
+        const size_t idxAdverb = rndInner % LS_ARRAYSIZE(InstructionAdverbs);
+        rndInner >>= 5;
+
+        const size_t idxUtensil = rndInner % LS_ARRAYSIZE(CookingUtensils);
+        rndInner >>= 5;
+
+        // choose adverb with chance
+        string_append(instructions, " ");
+        string_append(instructions, InstructionAdverbs[idxAdverb]);
+        string_append(instructions, " the ");
+
+        // choose utensil
+        string_append(instructions, CookingUtensils[idxUtensil]);
+      }
+
+      string_append(instructions, ".");
+    }
+
+    string_append(instructions, "\n");
+  }
+
+  string_append(instructions, InstructionEndings[idxEndInstruction]);
 }

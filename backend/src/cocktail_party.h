@@ -23,3 +23,4 @@ lsResult get_cocktails(_Out_ local_list<cocktail, MaxCocktailCount> &cocktails);
 void generate_cocktail_name(_Out_ raw_string &name);
 void generate_author(_Out_ raw_string &name);
 void generate_ingridients(_Out_ raw_string &ingridients);
+void generate_instructions(_Out_ raw_string &instructions);
