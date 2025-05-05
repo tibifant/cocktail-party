@@ -65,10 +65,6 @@ int32_t main(void)
     print(name.text, " by ", author.text, '\n');
   //}
 
-  raw_string test;
-  generate_ingridients(test);
-  print(test.text, '\n');
-
   raw_string inst;
   generate_instructions(inst);
   print(inst.text, '\n');

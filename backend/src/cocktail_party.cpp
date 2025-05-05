@@ -29,7 +29,7 @@ static const char *SingleInstructions[] = { "Cool to absolute Zero.", "Mix with 
 
 static const char *InstructionAdverbs[] = { "with", "using", "atop", "in front of", "in" };
 
-static const char *CookingUtensils[] = { "Pan", "Oven", "Mixer", "Shaker", "Knive", "Grater", "Stove", "Whisk", "Blender", "Spoon", "Fork", "Glass", "Corkscrew", "Can openener", "Cutting Board", "Skillet", "Baking Sheet", "Pie Dish" };
+static const char *CookingUtensils[] = { "Pan", "Oven", "Mixer", "Shaker", "Knive", "Grater", "Stove", "Whisk", "Blender", "Spoon", "Fork", "Glass", "Corkscrew", "Can Openener", "Cutting Board", "Skillet", "Baking Sheet", "Pie Dish" };
 
 static const char *InstructionEndings[] = { "Serve cold.", "Serve with Lime Juice.", "Serve immediately!", "Immediately serve in a Mug.", "Enjoy!", "Pour into a Martini Glass and serve.", "Garnish with an Olive and serve.", "Serve while stirring thoroughly.", "Serve on Ice.", "Serve warm.", "Serve on a warm summer night.", "Enjoy with friends!", "Bon Appetit!", "Decorate with a Cocktail Umbrella and serve." };
 
@@ -130,74 +130,69 @@ void generate_author(_Out_ raw_string &name)
   string_append(name, AuthorLastnames[idxLastName]);
 }
 
-void generate_ingridients(_Out_ raw_string &ingridients)
+void generate_measurement(_Out_ raw_string &text)
 {
-  constexpr size_t MaxIngridients = 12;
   constexpr size_t MaxAmount = 200;
+
+  uint64_t rnd = lsGetRand();
+
+  const size_t amount = rnd % MaxAmount;
+  rnd >>= 5;
+
+  const size_t idxUnit = rnd % LS_ARRAYSIZE(Units);
+  rnd >>= 5;
+
+  // amount
+  string_append(text, sformat(amount));
+  string_append(text, " ");
+
+  // unit
+  string_append(text, Units[idxUnit]);
+}
+
+void generate_ingridient(_Out_ raw_string &text)
+{
   constexpr size_t BeverageChance = 40;
   constexpr size_t NonBeverageAttributesChance = 10;
 
-  const size_t ingridientCount = (lsGetRand() % (MaxIngridients - 1)) + 1;
+  uint64_t rnd = lsGetRand();
 
-  for (size_t i = 0; i < ingridientCount; i++)
+  const size_t chanceBeverage = rnd % 100;
+  rnd >>= 5;
+
+  // choose ingridient
+  if (chanceBeverage < BeverageChance)
   {
-    uint64_t rnd = lsGetRand();
+    const size_t idxBeverage = rnd % LS_ARRAYSIZE(Beverages);
 
-    const size_t amount = rnd % MaxAmount;
+    string_append(text, Beverages[idxBeverage]);
+  }
+  else
+  {
+    const size_t chanceNonBeverageAttribute = rnd % 100;
     rnd >>= 5;
 
-    const size_t idxUnit = rnd % LS_ARRAYSIZE(Units);
+    const size_t idxNonBeverageAttributes = rnd % LS_ARRAYSIZE(NonBeverageAttributes);
     rnd >>= 5;
 
-    const size_t chanceBeverage = rnd % 100;
-    rnd >>= 5;
+    const size_t idxNonBeverage = rnd % LS_ARRAYSIZE(NonBeverages);
 
-    // choose amount
-    string_append(ingridients, sformat(amount));
-    string_append(ingridients, " ");
-
-    // choose unit
-    string_append(ingridients, Units[idxUnit]);
-    string_append(ingridients, " ");
-
-    // choose ingridient
-    if (chanceBeverage < BeverageChance)
+    // choose prefix with chance
+    if (chanceNonBeverageAttribute < NonBeverageAttributesChance)
     {
-      const size_t idxBeverage = rnd % LS_ARRAYSIZE(Beverages);
-
-      string_append(ingridients, Beverages[idxBeverage]);
-    }
-    else
-    {
-      const size_t chanceNonBeverageAttribute = rnd % 100;
-      rnd >>= 5;
-
-      const size_t idxNonBeverageAttributes = rnd % LS_ARRAYSIZE(NonBeverageAttributes);
-      rnd >>= 5;
-
-      const size_t idxNonBeverage = rnd % LS_ARRAYSIZE(NonBeverages);
-
-      // choose prefix with chance
-      if (chanceNonBeverageAttribute < NonBeverageAttributesChance)
-      {
-        string_append(ingridients, NonBeverageAttributes[idxNonBeverageAttributes]);
-        string_append(ingridients, " ");
-      }
-
-      string_append(ingridients, NonBeverages[idxNonBeverage]);
+      string_append(text, NonBeverageAttributes[idxNonBeverageAttributes]);
+      string_append(text, " ");
     }
 
-    if (i < ingridientCount - 1)
-      string_append(ingridients, "\n");
+    string_append(text, NonBeverages[idxNonBeverage]);
   }
 }
 
 void generate_instructions(_Out_ raw_string &instructions)
 {
-  constexpr size_t MaxInstructions = 12;
+  constexpr size_t MaxInstructions = 16;
   constexpr size_t SingleInstructionChance = 30;
-  constexpr size_t BeverageChance = 40;
-  constexpr size_t NonBeverageAttributesChance = 10;
+  constexpr size_t MeasurementChance = 25;
   constexpr size_t AdverbChance = 40;
 
   uint64_t rnd = lsGetRand();
@@ -226,39 +221,25 @@ void generate_instructions(_Out_ raw_string &instructions)
       const size_t idxInstruction = rndInner % LS_ARRAYSIZE(Instructions);
       rndInner >>= 5;
 
-      const size_t chanceBeverage = rnd % 100;
-      rndInner >>= 5;
-
       // choose instruction
       string_append(instructions, Instructions[idxInstruction]);
-      string_append(instructions, " the ");
+      string_append(instructions, " ");
 
       // choose ingridient
-      if (chanceBeverage < BeverageChance)
-      {
-        const size_t idxBeverage = rndInner % LS_ARRAYSIZE(Beverages);
+      const size_t chanceMeasurement = rndInner % 100;
+      rndInner >>= 5;
 
-        string_append(instructions, Beverages[idxBeverage]);
+      if (chanceMeasurement > MeasurementChance)
+      {
+        generate_measurement(instructions);
+        string_append(instructions, " ");
       }
       else
       {
-        const size_t chanceNonBeverageAttribute = rndInner % 100;
-        rndInner >>= 5;
-
-        const size_t idxNonBeverageAttributes = rndInner % LS_ARRAYSIZE(NonBeverageAttributes);
-        rndInner >>= 5;
-
-        const size_t idxNonBeverage = rndInner % LS_ARRAYSIZE(NonBeverages);
-
-        // choose prefix with chance
-        if (chanceNonBeverageAttribute < NonBeverageAttributesChance)
-        {
-          string_append(instructions, NonBeverageAttributes[idxNonBeverageAttributes]);
-          string_append(instructions, " ");
-        }
-
-        string_append(instructions, NonBeverages[idxNonBeverage]);
+        string_append(instructions, "the ");
       }
+
+      generate_ingridient(instructions);
 
       const size_t chanceAdverb = rndInner % 100;
       rndInner >>= 5;
