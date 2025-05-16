@@ -1,14 +1,17 @@
 #include "cocktail_party.h"
 #include "pool.h"
+#include <mutex>
 
 pool<cocktail> Cocktails;
+
+static std::mutex _ThreadLock;
 
 static const char *Units[] =
 { "g", "mg", "kg", "cg", "dg", "hg", "dag", "t", "oz", "lb", "st", "long ton", "short ton", "L", "mL", "m³", "cm³", "dm³", "hL", "dL", "cL", "gal", "qt", "pt", "gi", "min", "bbl", "tsp", "tbsp", "c", "pt", "qt", "gal", "fl oz", "in³", "ft³", "yd³", "whole", "bowl(s)" };
 
 static const char *AuthorFirstnames[] = { "Nelson", "Igor", "Evgeniy", "Adriana", "Gary", "Moses", "Agnes", "Cesar", "Xiaoli", "Usha", "Alfredo", "Isaac", "Luiz", "Josephine", "Krishna", "Michael", "Juan", "Anna", "Mary", "Jean", "Robert", "Daniel", "Luis", "Carlos", "James", "Antonio", "Joseph", "Hui", "Elena", "Francisco", "Carmen", "Ghulam", "Barbara", "Angel", "Vladimir", "Günther", "Kai", "Rainer", "Hans", "Jesus", "Donald", "Caren", "Captain", "Doctor", "Professor", "Mister", "Miss", "Lady", "Sir", "Richard", "Dolly", "Angela", "Marie", "Sarah", "Frank", "Harry", "Giga", "Madonna", "Jan-Phillip", "Annegret", "Alonso", "Horst", "Stina", "Uschi", "Manfred", "Albert", "Celine", "Taylor" };
 
-static const char *AuthorLastnames[] = { "Wang", "Walker", "Clark", "Lewis", "Hosen", "Diarra", "Franco", "Moyo", "Watson", "Hughes", "Gomez", "Schneider", "Fischer", "Petrov", "Meyer", "Weber", "Thomas", "Ferrari", "Lauch", "Trump", "Stalin", "Jinping", "Jong Un", "Putin", "Nero", "the Hun", "Pinochet", "Honecker", "Napoleon", "Lenin", "Castro", "Mussolini", "Piranha", "Lewis", "Merkel", "Curie", "Connor", "Cena", "Duck", "Sinatra", "Styles", "Chad", "Krampf-Kabrackenbauer", "Mozart", "Spears", "Dion", "Swift", "Newton", "Einstein"};
+static const char *AuthorLastnames[] = { "Wang", "Walker", "Clark", "Lewis", "Hosen", "Diarra", "Franco", "Moyo", "Watson", "Hughes", "Gomez", "Schneider", "Fischer", "Petrov", "Meyer", "Weber", "Thomas", "Ferrari", "Lauch", "Trump", "Stalin", "Jinping", "Jong Un", "Putin", "Nero", "the Hun", "Pinochet", "Honecker", "Napoleon", "Lenin", "Castro", "Mussolini", "Piranha", "Lewis", "Merkel", "Curie", "Connor", "Cena", "Duck", "Sinatra", "Styles", "Chad", "Krampf-Kabrackenbauer", "Mozart", "Spears", "Dion", "Swift", "Newton", "Einstein" };
 
 static const char *IngridientPrefixes[] = { "Aged", "Amber", "Black", "Blonde", "Bold", "Bourbon", "Brut", "Caramel", "Cherry", "Citrus", "Creamy", "Dark", "Dry", "Elderflower", "Extra", "Fruity", "Golden", "Green", "Honey", "Ice", "Jamaican", "Lemon", "Light", "Lime", "Mango", "Mellow", "Mint", "Moscow", "Navy", "Old", "Orange", "Peach", "Pineapple", "Raspberry", "Red", "Rum", "Smooth", "Spiced", "Strawberry", "Sweet", "Tequila", "Tropical", "Vanilla", "Vermouth", "Vodka", "White", "Whiskey", "Wild", "Winter", "Young", "French", "Beach", "Hot", "Indonesian", "Alaska", "Florida", "Barbados", "Mallorca", "Flavor", "Fidji", "Tiki", "Caribbean", "Mulled" };
 
@@ -267,4 +270,61 @@ void generate_instructions(_Out_ raw_string &instructions)
   }
 
   string_append(instructions, InstructionEndings[idxEndInstruction]);
+}
+
+void generate_cocktail(_Out_ cocktail &ret)
+{
+  generate_cocktail_name(ret.name);
+  generate_author(ret.author_name);
+  generate_instructions(ret.instructions);
+}
+
+lsResult add_cocktail()
+{
+  lsResult result = lsR_Success;
+
+  cocktail cktail;
+  generate_cocktail(cktail);
+
+  // Scope Lock.
+  {
+    std::scoped_lock lock(_ThreadLock);
+
+    size_t _unused;
+    LS_ERROR_CHECK(pool_add(&Cocktails, cktail, &_unused)); // TODO: fix
+  }
+
+epilogue:
+  return result;
+}
+
+lsResult update_cocktail(const size_t cocktail_id, const cocktail updated_cocktail)
+{
+  lsResult result = lsR_Success;
+  
+  // Scope Lock.
+  {
+    std::scoped_lock lock(_ThreadLock);
+
+    LS_ERROR_IF(!pool_has(Cocktails, cocktail_id), lsR_InvalidParameter);    
+    LS_ERROR_CHECK(pool_insertAt(&Cocktails, updated_cocktail, cocktail_id, true));
+  }
+
+epilogue:
+  return result;
+}
+
+lsResult remove_cocktail(const size_t cocktail_id)
+{
+  lsResult result = lsR_Success;
+
+  // Scope Lock.
+  {
+    std::scoped_lock lock(_ThreadLock);
+
+    LS_ERROR_CHECK(pool_remove_safe(&Cocktails, cocktail_id));
+  }
+
+epilogue:
+  return result;
 }

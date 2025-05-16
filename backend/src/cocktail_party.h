@@ -17,7 +17,7 @@ lsResult add_cocktail();
 lsResult update_cocktail(const size_t cocktail_id, const cocktail updated_cocktail);
 lsResult remove_cocktail(const size_t cocktail_id);
 
-lsResult get_cocktails(_Out_ local_list<cocktail, MaxCocktailCount> &cocktails);
+lsResult get_cocktails(_Out_ local_list<cocktail, MaxCocktailCount> &cocktails); // TODO! (include idxs)
 
 void generate_cocktail_name(_Out_ raw_string &name);
 void generate_author(_Out_ raw_string &name);
