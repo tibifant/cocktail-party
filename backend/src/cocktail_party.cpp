@@ -1,7 +1,13 @@
 #include "cocktail_party.h"
+
 #include "pool.h"
 
-pool<cocktail> Cocktails;
+#include <mutex>
+
+pool<cocktail> _Cocktails;
+static std::mutex _ThreadLock;
+
+//////////////////////////////////////////////////////////////////////////
 
 static const char *Units[] =
 { "g", "mg", "kg", "cg", "dg", "hg", "dag", "t", "oz", "lb", "st", "long ton", "short ton", "L", "mL", "m³", "cm³", "dm³", "hL", "dL", "cL", "gal", "qt", "pt", "gi", "min", "bbl", "tsp", "tbsp", "c", "pt", "qt", "gal", "fl oz", "in³", "ft³", "yd³", "whole", "bowl(s)" };
@@ -267,4 +273,35 @@ void generate_instructions(_Out_ raw_string &instructions)
   }
 
   string_append(instructions, InstructionEndings[idxEndInstruction]);
+}
+
+cocktail generate_cocktail()
+{
+  cocktail ret;
+
+  generate_cocktail_name(ret.name);
+  generate_author(ret.author_name);
+  generate_instructions(ret.instructions);
+
+  return ret;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+lsResult add_cocktail()
+{
+  lsResult result = lsR_Success;
+
+  const cocktail c = generate_cocktail();
+
+  // Scope Lock.
+  {
+    std::scoped_lock lock(_ThreadLock);
+    
+    size_t _unused;
+    LS_ERROR_CHECK(pool_add(&_Cocktails, c, &_unused));
+  }
+
+epilogue:
+  return result;
 }
