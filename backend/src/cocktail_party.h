@@ -19,4 +19,4 @@ lsResult add_cocktail();
 lsResult update_cocktail(const size_t cocktail_id, const cocktail updated_cocktail);
 lsResult remove_cocktail(const size_t cocktail_id);
 
-lsResult get_cocktails(_Out_ small_list<cocktail> &cocktails);
+lsResult get_cocktails(_Out_ small_list<std::tuple<size_t, raw_string>> &cocktailInfos);

@@ -315,8 +315,8 @@ lsResult update_cocktail(const size_t cocktail_id, const cocktail updated_cockta
   {
     std::scoped_lock lock(_ThreadLock);
 
-    LS_ERROR_IF(!pool_has(Cocktails, cocktail_id), lsR_InvalidParameter);    
-    LS_ERROR_CHECK(pool_insertAt(&Cocktails, updated_cocktail, cocktail_id, true));
+    LS_ERROR_IF(!pool_has(_Cocktails, cocktail_id), lsR_InvalidParameter);
+    LS_ERROR_CHECK(pool_insertAt(&_Cocktails, updated_cocktail, cocktail_id, true));
   }
 
 epilogue:
@@ -331,7 +331,20 @@ lsResult remove_cocktail(const size_t cocktail_id)
   {
     std::scoped_lock lock(_ThreadLock);
 
-    LS_ERROR_CHECK(pool_remove_safe(&Cocktails, cocktail_id));
+    LS_ERROR_CHECK(pool_remove_safe(&_Cocktails, cocktail_id));
+  }
+
+epilogue:
+  return result;
+}
+
+lsResult get_cocktails(small_list<std::tuple<size_t, raw_string>> &cocktailInfos)
+{
+  lsResult result = lsR_Success;
+
+  for ()
+  {
+
   }
 
 epilogue:
