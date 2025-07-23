@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>cokctail party</title>
+  <title>cocktail party</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="stylesheet" href="assets/style.css">
@@ -11,6 +11,8 @@
 
 <body>
   <div id="app_container">
+    <ul id="list"></ul>
+    <box id="details"></box>
   </div>
 
 <script>
@@ -75,7 +77,30 @@
     return elem;
   }
 
-  
+  function on_failure() {
+    //allert
+  }
+
+  function handle_click(id) {
+    load_backend_url('get', generate_detail_view, { id: id }, on_failure)
+  }
+
+  function generate_list(payload) {
+    list = document.getElementById('list');
+
+    for (e of payload) {
+      elem = append_element(list, e.title, 'list_button');
+      
+      (() => { // scope to capture value of id
+          let _id = e.id;
+          elem.addEventListener('click', () => { handle_click(_id); });
+        })();
+    }
+  }
+  // /get_list -> callback: add all elements to list
+  // onclick: -> /get -> callback: show detail view
+
+  // setup: call get list
 
   document.addEventListener('DOMContentLoaded', setup);
 </script>

@@ -39,8 +39,10 @@ static const char *CookingUtensils[] = { "Pan", "Oven", "Mixer", "Shaker", "Kniv
 
 static const char *InstructionEndings[] = { "Serve cold.", "Serve with Lime Juice.", "Serve immediately!", "Immediately serve in a Mug.", "Enjoy!", "Pour into a Martini Glass and serve.", "Garnish with an Olive and serve.", "Serve while stirring thoroughly.", "Serve on Ice.", "Serve warm.", "Serve on a warm summer night.", "Enjoy with friends!", "Bon Appetit!", "Decorate with a Cocktail Umbrella and serve." };
 
-void generate_cocktail_title(_Out_ raw_string &title)
+lsResult generate_cocktail_title(_Out_ raw_string &title)
 {
+  lsResult result = lsR_Success;
+
   constexpr size_t ChanceIngridientAttribute = 40;
   constexpr size_t ChanceCocktailAttribute = 10;
 
@@ -61,26 +63,26 @@ void generate_cocktail_title(_Out_ raw_string &title)
   const size_t randChanceCocktailAttribute = rnd % 100;
 
   // choose random prefix
-  string_append(title, IngridientPrefixes[idxIngridientPrefixA]);
-  string_append(title, " ");
+  LS_ERROR_CHECK(string_append(title, IngridientPrefixes[idxIngridientPrefixA]));
+  LS_ERROR_CHECK(string_append(title, " "));
 
   // choose attribute with chance
   if (randChanceIngridientAttribute < ChanceIngridientAttribute)
   {
-    string_append(title, NonBeverageAttributes[idxIngridientAttribute]);
-    string_append(title, " ");
+    LS_ERROR_CHECK(string_append(title, NonBeverageAttributes[idxIngridientAttribute]));
+    LS_ERROR_CHECK(string_append(title, " "));
   }
 
   // choose random non beverage ingridient
-  string_append(title, NonBeverages[idxNonBeverage]);
-  string_append(title, " ");
+  LS_ERROR_CHECK(string_append(title, NonBeverages[idxNonBeverage]));
+  LS_ERROR_CHECK(string_append(title, " "));
 
   // choose random prefix
-  string_append(title, IngridientPrefixes[idxIngridientPrefixB]);
-  string_append(title, " ");
+  LS_ERROR_CHECK(string_append(title, IngridientPrefixes[idxIngridientPrefixB]));
+  LS_ERROR_CHECK(string_append(title, " "));
 
   // choose random beverage
-  string_append(title, Beverages[idxBeverage]);
+  LS_ERROR_CHECK(string_append(title, Beverages[idxBeverage]));
 
   // choose either single or prefix attribute with chance (if prefix -> choose ingridient)
   if (randChanceCocktailAttribute < ChanceCocktailAttribute)
@@ -88,12 +90,12 @@ void generate_cocktail_title(_Out_ raw_string &title)
     rnd >>= 5;
     const bool chanceCocktailAttributeSingle = rnd & 1ULL;
 
-    string_append(title, " ");
+    LS_ERROR_CHECK(string_append(title, " "));
 
     if (chanceCocktailAttributeSingle)
     {
       const size_t idxCocktailAttribute = rnd % LS_ARRAYSIZE(CocktailAttributesSingle);
-      string_append(title, CocktailAttributesSingle[idxCocktailAttribute]);
+      LS_ERROR_CHECK(string_append(title, CocktailAttributesSingle[idxCocktailAttribute]));
     }
     else
     {
@@ -101,15 +103,20 @@ void generate_cocktail_title(_Out_ raw_string &title)
       rnd <<= 5;
       const size_t idxNonBeverageB = rnd % LS_ARRAYSIZE(NonBeverages);
 
-      string_append(title, CocktailAttributesPrefix[idxCocktailAttribute]);
-      string_append(title, " ");
-      string_append(title, NonBeverages[idxNonBeverageB]);
+      LS_ERROR_CHECK(string_append(title, CocktailAttributesPrefix[idxCocktailAttribute]));
+      LS_ERROR_CHECK(string_append(title, " "));
+      LS_ERROR_CHECK(string_append(title, NonBeverages[idxNonBeverageB]));
     }
   }
+
+epilogue:
+  return result;
 }
 
-void generate_author(_Out_ raw_string &name)
+lsResult generate_author(_Out_ raw_string &name)
 {
+  lsResult result = lsR_Success;
+
   constexpr uint8_t ChanceSecondName = 35;
 
   uint64_t rnd = lsGetRand();
@@ -122,22 +129,27 @@ void generate_author(_Out_ raw_string &name)
   const size_t idxLastName = rnd % LS_ARRAYSIZE(AuthorLastnames);
 
   // choose random first name
-  string_append(name, AuthorFirstnames[idxFirstName]);
-  string_append(name, " ");
+  LS_ERROR_CHECK(string_append(name, AuthorFirstnames[idxFirstName]));
+  LS_ERROR_CHECK(string_append(name, " "));
 
   // choose second name with chance
   if (randChanceSecondName < ChanceSecondName)
   {
-    string_append(name, AuthorFirstnames[idxSecondName]);
-    string_append(name, " ");
+    LS_ERROR_CHECK(string_append(name, AuthorFirstnames[idxSecondName]));
+    LS_ERROR_CHECK(string_append(name, " "));
   }
 
   // choose random lastname
-  string_append(name, AuthorLastnames[idxLastName]);
+  LS_ERROR_CHECK(string_append(name, AuthorLastnames[idxLastName]));
+
+epilogue:
+  return result;
 }
 
-void generate_measurement(_Out_ raw_string &text)
+lsResult generate_measurement(_Out_ raw_string &text)
 {
+  lsResult result = lsR_Success;
+
   constexpr size_t MaxAmount = 200;
 
   uint64_t rnd = lsGetRand();
@@ -149,15 +161,20 @@ void generate_measurement(_Out_ raw_string &text)
   rnd >>= 5;
 
   // amount
-  string_append(text, sformat(amount));
-  string_append(text, " ");
+  LS_ERROR_CHECK(string_append(text, sformat(amount)));
+  LS_ERROR_CHECK(string_append(text, " "));
 
   // unit
-  string_append(text, Units[idxUnit]);
+  LS_ERROR_CHECK(string_append(text, Units[idxUnit]));
+
+epilogue:
+  return result;
 }
 
-void generate_ingridient(_Out_ raw_string &text)
+lsResult generate_ingridient(_Out_ raw_string &text)
 {
+  lsResult result = lsR_Success;
+
   constexpr size_t BeverageChance = 40;
   constexpr size_t NonBeverageAttributesChance = 10;
 
@@ -171,7 +188,7 @@ void generate_ingridient(_Out_ raw_string &text)
   {
     const size_t idxBeverage = rnd % LS_ARRAYSIZE(Beverages);
 
-    string_append(text, Beverages[idxBeverage]);
+    LS_ERROR_CHECK(string_append(text, Beverages[idxBeverage]));
   }
   else
   {
@@ -186,16 +203,21 @@ void generate_ingridient(_Out_ raw_string &text)
     // choose prefix with chance
     if (chanceNonBeverageAttribute < NonBeverageAttributesChance)
     {
-      string_append(text, NonBeverageAttributes[idxNonBeverageAttributes]);
-      string_append(text, " ");
+      LS_ERROR_CHECK(string_append(text, NonBeverageAttributes[idxNonBeverageAttributes]));
+      LS_ERROR_CHECK(string_append(text, " "));
     }
 
-    string_append(text, NonBeverages[idxNonBeverage]);
+    LS_ERROR_CHECK(string_append(text, NonBeverages[idxNonBeverage]));
   }
+
+epilogue:
+  return result;
 }
 
-void generate_instructions(_Out_ raw_string &instructions)
+lsResult generate_instructions(_Out_ raw_string &instructions)
 {
+  lsResult result = lsR_Success;
+
   constexpr size_t MaxInstructions = 16;
   constexpr size_t SingleInstructionChance = 30;
   constexpr size_t MeasurementChance = 25;
@@ -220,7 +242,7 @@ void generate_instructions(_Out_ raw_string &instructions)
     {
       const size_t idxSingleInstruction = rndInner % LS_ARRAYSIZE(SingleInstructions);
 
-      string_append(instructions, SingleInstructions[idxSingleInstruction]);
+      LS_ERROR_CHECK(string_append(instructions, SingleInstructions[idxSingleInstruction]));
     }
     else
     {
@@ -228,8 +250,8 @@ void generate_instructions(_Out_ raw_string &instructions)
       rndInner >>= 5;
 
       // choose instruction
-      string_append(instructions, Instructions[idxInstruction]);
-      string_append(instructions, " ");
+      LS_ERROR_CHECK(string_append(instructions, Instructions[idxInstruction]));
+      LS_ERROR_CHECK(string_append(instructions, " "));
 
       // choose ingridient
       const size_t chanceMeasurement = rndInner % 100;
@@ -238,11 +260,11 @@ void generate_instructions(_Out_ raw_string &instructions)
       if (chanceMeasurement > MeasurementChance)
       {
         generate_measurement(instructions);
-        string_append(instructions, " ");
+        LS_ERROR_CHECK(string_append(instructions, " "));
       }
       else
       {
-        string_append(instructions, "the ");
+        LS_ERROR_CHECK(string_append(instructions, "the "));
       }
 
       generate_ingridient(instructions);
@@ -259,33 +281,39 @@ void generate_instructions(_Out_ raw_string &instructions)
         rndInner >>= 5;
 
         // choose adverb with chance
-        string_append(instructions, " ");
-        string_append(instructions, InstructionAdverbs[idxAdverb]);
-        string_append(instructions, " the ");
+        LS_ERROR_CHECK(string_append(instructions, " "));
+        LS_ERROR_CHECK(string_append(instructions, InstructionAdverbs[idxAdverb]));
+        LS_ERROR_CHECK(string_append(instructions, " the "));
 
         // choose utensil
-        string_append(instructions, CookingUtensils[idxUtensil]);
+        LS_ERROR_CHECK(string_append(instructions, CookingUtensils[idxUtensil]));
       }
 
-      string_append(instructions, ".");
+      LS_ERROR_CHECK(string_append(instructions, "."));
     }
 
-    string_append(instructions, "\n");
+    LS_ERROR_CHECK(string_append(instructions, "\n"));
   }
 
-  string_append(instructions, InstructionEndings[idxEndInstruction]);
+  LS_ERROR_CHECK(string_append(instructions, InstructionEndings[idxEndInstruction]));
+
+epilogue:
+  return result;
 }
 
-cocktail generate_cocktail()
+lsResult generate_cocktail(_Out_ cocktail &ret)
 {
-  cocktail ret;
+  lsResult result = lsR_Success;
 
-  generate_cocktail_title(ret.title);
-  generate_author(ret.author_name);
-  generate_instructions(ret.instructions);
+  LS_ERROR_CHECK(generate_cocktail_title(ret.title));
+  LS_ERROR_CHECK(generate_author(ret.author_name));
+  LS_ERROR_CHECK(generate_instructions(ret.instructions));
 
-  return ret;
+epilogue:
+  return result;
 }
+
+// TODO: error handling for string_append
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -302,7 +330,7 @@ lsResult get_cocktails(_Out_ small_list<cocktail_info> &list)
     for (const auto &c : _Cocktails)
     {
       raw_string title;
-      string_append(title, c.pItem->title);
+      LS_ERROR_CHECK(string_append(title, c.pItem->title));
       LS_ERROR_CHECK(list_add(&list, cocktail_info(c.index, std::move(title)))); 
     }
   }
@@ -328,12 +356,12 @@ epilogue:
   return result;
 }
 
-lsResult add_cocktail(_Out_ size_t &id, _Out_ raw_string &name)
+lsResult add_cocktail(_Out_ size_t &id)
 {
   lsResult result = lsR_Success;
 
-  cocktail c = generate_cocktail();
-  LS_ERROR_CHECK(string_append(name, c.title));
+  cocktail c;
+  LS_ERROR_CHECK(generate_cocktail(c));
 
   // Scope Lock.
   {

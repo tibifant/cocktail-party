@@ -136,9 +136,8 @@ crow::response handle_add(const crow::request &req)
   (void)req;
 
   size_t id;
-  raw_string title; // TODO: 
 
-  if (LS_FAILED(add_cocktail(id, title)))
+  if (LS_FAILED(add_cocktail(id)))
     return crow::response(crow::status::INTERNAL_SERVER_ERROR);
 
   crow::json::wvalue ret;
