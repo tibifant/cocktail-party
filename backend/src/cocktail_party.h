@@ -11,10 +11,6 @@ struct cocktail
   raw_string instructions;
 };
 
-void generate_cocktail_name(_Out_ raw_string &name);
-void generate_author(_Out_ raw_string &name);
-void generate_instructions(_Out_ raw_string &instructions);
-
 lsResult get_cocktails(_Out_ small_list<std::tuple<size_t, raw_string>> &cocktailInfos);
 lsResult get_cocktail(const size_t id, _Out_ cocktail &c);
 lsResult add_cocktail(_Out_ size_t &id, _Out_ raw_string &name);

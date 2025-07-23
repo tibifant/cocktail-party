@@ -65,19 +65,6 @@ static std::mutex _ThreadLock;
 
 int32_t main(void)
 {
-  //for (size_t i = 0; i < 32; i++)
-  //{
-    raw_string name;
-    generate_cocktail_name(name);
-    raw_string author;
-    generate_author(author);
-    print(name.text, " by ", author.text, '\n');
-  //}
-
-  raw_string inst;
-  generate_instructions(inst);
-  print(inst.text, '\n');
-
   crow::App<crow::CORSHandler> app;
 
   auto &cors = app.get_middleware<crow::CORSHandler>();
