@@ -39,7 +39,7 @@ static const char *CookingUtensils[] = { "Pan", "Oven", "Mixer", "Shaker", "Kniv
 
 static const char *InstructionEndings[] = { "Serve cold.", "Serve with Lime Juice.", "Serve immediately!", "Immediately serve in a Mug.", "Enjoy!", "Pour into a Martini Glass and serve.", "Garnish with an Olive and serve.", "Serve while stirring thoroughly.", "Serve on Ice.", "Serve warm.", "Serve on a warm summer night.", "Enjoy with friends!", "Bon Appetit!", "Decorate with a Cocktail Umbrella and serve." };
 
-void generate_cocktail_name(_Out_ raw_string &name)
+void generate_cocktail_title(_Out_ raw_string &title)
 {
   constexpr size_t ChanceIngridientAttribute = 40;
   constexpr size_t ChanceCocktailAttribute = 10;
@@ -61,26 +61,26 @@ void generate_cocktail_name(_Out_ raw_string &name)
   const size_t randChanceCocktailAttribute = rnd % 100;
 
   // choose random prefix
-  string_append(name, IngridientPrefixes[idxIngridientPrefixA]);
-  string_append(name, " ");
+  string_append(title, IngridientPrefixes[idxIngridientPrefixA]);
+  string_append(title, " ");
 
   // choose attribute with chance
   if (randChanceIngridientAttribute < ChanceIngridientAttribute)
   {
-    string_append(name, NonBeverageAttributes[idxIngridientAttribute]);
-    string_append(name, " ");
+    string_append(title, NonBeverageAttributes[idxIngridientAttribute]);
+    string_append(title, " ");
   }
 
   // choose random non beverage ingridient
-  string_append(name, NonBeverages[idxNonBeverage]);
-  string_append(name, " ");
+  string_append(title, NonBeverages[idxNonBeverage]);
+  string_append(title, " ");
 
   // choose random prefix
-  string_append(name, IngridientPrefixes[idxIngridientPrefixB]);
-  string_append(name, " ");
+  string_append(title, IngridientPrefixes[idxIngridientPrefixB]);
+  string_append(title, " ");
 
   // choose random beverage
-  string_append(name, Beverages[idxBeverage]);
+  string_append(title, Beverages[idxBeverage]);
 
   // choose either single or prefix attribute with chance (if prefix -> choose ingridient)
   if (randChanceCocktailAttribute < ChanceCocktailAttribute)
@@ -88,12 +88,12 @@ void generate_cocktail_name(_Out_ raw_string &name)
     rnd >>= 5;
     const bool chanceCocktailAttributeSingle = rnd & 1ULL;
 
-    string_append(name, " ");
+    string_append(title, " ");
 
     if (chanceCocktailAttributeSingle)
     {
       const size_t idxCocktailAttribute = rnd % LS_ARRAYSIZE(CocktailAttributesSingle);
-      string_append(name, CocktailAttributesSingle[idxCocktailAttribute]);
+      string_append(title, CocktailAttributesSingle[idxCocktailAttribute]);
     }
     else
     {
@@ -101,9 +101,9 @@ void generate_cocktail_name(_Out_ raw_string &name)
       rnd <<= 5;
       const size_t idxNonBeverageB = rnd % LS_ARRAYSIZE(NonBeverages);
 
-      string_append(name, CocktailAttributesPrefix[idxCocktailAttribute]);
-      string_append(name, " ");
-      string_append(name, NonBeverages[idxNonBeverageB]);
+      string_append(title, CocktailAttributesPrefix[idxCocktailAttribute]);
+      string_append(title, " ");
+      string_append(title, NonBeverages[idxNonBeverageB]);
     }
   }
 }
@@ -280,7 +280,7 @@ cocktail generate_cocktail()
 {
   cocktail ret;
 
-  generate_cocktail_name(ret.name);
+  generate_cocktail_title(ret.title);
   generate_author(ret.author_name);
   generate_instructions(ret.instructions);
 
@@ -289,33 +289,39 @@ cocktail generate_cocktail()
 
 //////////////////////////////////////////////////////////////////////////
 
-lsResult get_cocktails(small_list<std::tuple<size_t, raw_string>> &cocktailInfos)
+lsResult get_cocktails(_Out_ small_list<cocktail_info> &list)
 {
   lsResult result = lsR_Success;
 
-  list_clear(&cocktailInfos);
+  list_clear(&list);
 
   // Scope Lock.
   {
     std::scoped_lock lock(_ThreadLock);
 
     for (const auto &c : _Cocktails)
-      LS_ERROR_CHECK(list_add(&cocktailInfos, std::make_tuple(c.index, c.pItem->name))); // FIX: maybe same problem as below?
+    {
+      raw_string title;
+      string_append(title, c.pItem->title);
+      LS_ERROR_CHECK(list_add(&list, cocktail_info(c.index, std::move(title)))); 
+    }
   }
 
 epilogue:
   return result;
 }
 
-lsResult get_cocktail(const size_t id, _Out_ cocktail &c)
+lsResult get_cocktail(const size_t id, _Out_ cocktail *pCocktail)
 {
   lsResult result = lsR_Success;
+  
+  lsAssert(pCocktail == nullptr);
 
   // Scope Lock.
   {
     std::scoped_lock lock(_ThreadLock);
     
-    LS_ERROR_CHECK(pool_get_safe(&_Cocktails, id, &c)); // FIX.
+    LS_ERROR_CHECK(pool_get_safe(&_Cocktails, id, &pCocktail));
   }
 
 epilogue:
@@ -326,14 +332,14 @@ lsResult add_cocktail(_Out_ size_t &id, _Out_ raw_string &name)
 {
   lsResult result = lsR_Success;
 
-  const cocktail c = generate_cocktail();
-  name.text = c.name.text; // is this allowed?
+  cocktail c = generate_cocktail();
+  LS_ERROR_CHECK(string_append(name, c.title));
 
   // Scope Lock.
   {
     std::scoped_lock lock(_ThreadLock);
 
-    LS_ERROR_CHECK(pool_add(&_Cocktails, c, &id));
+    LS_ERROR_CHECK(pool_add(&_Cocktails, std::move(c), &id));
   }
 
 epilogue:
@@ -352,7 +358,10 @@ lsResult update_cocktail(const size_t id)
     std::scoped_lock lock(_ThreadLock);
 
     LS_ERROR_IF(!pool_has(_Cocktails, id), lsR_InvalidParameter);
-    pool_get(_Cocktails, id)->instructions.text = i.text; // is this allowed?
+    
+    cocktail *pCocktail = nullptr;
+    LS_ERROR_CHECK(pool_get_safe(&_Cocktails, id, &pCocktail));
+    pCocktail->instructions = std::move(i);
   }
 
 epilogue:

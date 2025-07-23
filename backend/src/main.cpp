@@ -91,7 +91,7 @@ crow::response handle_get_list(const crow::request &req)
 {
   (void)req;
 
-  small_list<std::tuple<size_t, raw_string>> list;
+  small_list<cocktail_info> list;
 
   if (LS_FAILED(get_cocktails(list)))
     return crow::response(crow::status::INTERNAL_SERVER_ERROR);
@@ -102,8 +102,8 @@ crow::response handle_get_list(const crow::request &req)
   for (const auto &item : list)
   {
     i++;
-    ret[i]["id"] = std::get<0>(item);
-    ret[i]["title"] = std::get<1>(item).text;
+    ret[i]["id"] = item.id;
+    ret[i]["title"] = item.title.text;
   }
 
   return ret;
@@ -120,11 +120,11 @@ crow::response handle_get(const crow::request &req)
 
   cocktail c;
 
-  if (LS_FAILED(get_cocktail(id, c)))
+  if (LS_FAILED(get_cocktail(id, &c)))
     return crow::response(crow::status::INTERNAL_SERVER_ERROR);
 
   crow::json::wvalue ret;
-  ret["title"] = c.name.text;
+  ret["title"] = c.title.text;
   ret["author"] = c.author_name.text;
   ret["instructions"] = c.instructions.text;
 
@@ -136,7 +136,7 @@ crow::response handle_add(const crow::request &req)
   (void)req;
 
   size_t id;
-  raw_string title; // TODO: remove
+  raw_string title; // TODO: 
 
   if (LS_FAILED(add_cocktail(id, title)))
     return crow::response(crow::status::INTERNAL_SERVER_ERROR);
