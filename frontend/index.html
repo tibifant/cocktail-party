@@ -11,8 +11,15 @@
 
 <body>
   <div id="app_container">
+    <button id="add">Add cocktail</button>
     <ul id="list"></ul>
-    <box id="details"></box>
+    <box>
+      <h3 id="title"></h3>
+      <p>by <a id="author"></a></p>
+      <p id="instructions"></p>
+      <button id="update">Update</button>
+      <button id="remove">Delete</button>
+    </box>
   </div>
 
 <script>
@@ -77,19 +84,31 @@
     return elem;
   }
 
+  ///////////////////////////////////////////////////////////
+
+  let __id = -1;
+  
   function on_failure() {
-    //allert
+    alert('Failure when loading backend URL.');
+  }
+
+  function fill_cocktail_view(payload) {
+    document.getElementById("title").innerHTML = payload.title;
+    document.getElementById("author").innerHTML = payload.author;
+    let i = payload.instructions.replace(/\n/g, "<br>")
+    document.getElementById("instructions").innerHTML = i;
   }
 
   function handle_click(id) {
-    load_backend_url('get', generate_detail_view, { id: id }, on_failure)
+    load_backend_url('get', fill_cocktail_view, { id: id }, on_failure);
+    __id = id;
   }
 
   function generate_list(payload) {
-    list = document.getElementById('list');
+    let list = document.getElementById('list');
 
     for (e of payload) {
-      elem = append_element(list, e.title, 'list_button');
+      let elem = append_element(list, e.title, 'list_button');
       
       (() => { // scope to capture value of id
           let _id = e.id;
@@ -97,10 +116,12 @@
         })();
     }
   }
-  // /get_list -> callback: add all elements to list
-  // onclick: -> /get -> callback: show detail view
 
   // setup: call get list
+  function setup() {
+    __id = -1;
+    load_backend_url('get_list', generate_list, {}, on_failure);
+  }
 
   document.addEventListener('DOMContentLoaded', setup);
 </script>
