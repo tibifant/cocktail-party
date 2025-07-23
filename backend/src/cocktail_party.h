@@ -15,8 +15,9 @@ void generate_cocktail_name(_Out_ raw_string &name);
 void generate_author(_Out_ raw_string &name);
 void generate_instructions(_Out_ raw_string &instructions);
 
-lsResult add_cocktail();
-lsResult update_cocktail(const size_t cocktail_id, const cocktail updated_cocktail);
-lsResult remove_cocktail(const size_t cocktail_id);
-
 lsResult get_cocktails(_Out_ small_list<std::tuple<size_t, raw_string>> &cocktailInfos);
+lsResult get_cocktail(const size_t id, _Out_ cocktail &c);
+lsResult add_cocktail(_Out_ size_t &id, _Out_ raw_string &name);
+lsResult update_cocktail(const size_t id);
+lsResult remove_cocktail(const size_t id);
+

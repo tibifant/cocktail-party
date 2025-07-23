@@ -289,62 +289,85 @@ cocktail generate_cocktail()
 
 //////////////////////////////////////////////////////////////////////////
 
-lsResult add_cocktail()
-{
-  lsResult result = lsR_Success;
-
-  const cocktail c = generate_cocktail();
-
-  // Scope Lock.
-  {
-    std::scoped_lock lock(_ThreadLock);
-
-    size_t _unused;
-    LS_ERROR_CHECK(pool_add(&_Cocktails, c, &_unused));
-  }
-
-epilogue:
-  return result;
-}
-
-lsResult update_cocktail(const size_t cocktail_id, const cocktail updated_cocktail)
-{
-  lsResult result = lsR_Success;
-  
-  // Scope Lock.
-  {
-    std::scoped_lock lock(_ThreadLock);
-
-    LS_ERROR_IF(!pool_has(_Cocktails, cocktail_id), lsR_InvalidParameter);
-    LS_ERROR_CHECK(pool_insertAt(&_Cocktails, updated_cocktail, cocktail_id, true));
-  }
-
-epilogue:
-  return result;
-}
-
-lsResult remove_cocktail(const size_t cocktail_id)
-{
-  lsResult result = lsR_Success;
-
-  // Scope Lock.
-  {
-    std::scoped_lock lock(_ThreadLock);
-
-    LS_ERROR_CHECK(pool_remove_safe(&_Cocktails, cocktail_id));
-  }
-
-epilogue:
-  return result;
-}
-
 lsResult get_cocktails(small_list<std::tuple<size_t, raw_string>> &cocktailInfos)
 {
   lsResult result = lsR_Success;
 
-  for ()
-  {
+  list_clear(&cocktailInfos);
 
+  // Scope Lock.
+  {
+    std::scoped_lock lock(_ThreadLock);
+
+    for (const auto &c : _Cocktails)
+      LS_ERROR_CHECK(list_add(&cocktailInfos, std::make_tuple(c.index, c.pItem->name))); // FIX: maybe same problem as below?
+  }
+
+epilogue:
+  return result;
+}
+
+lsResult get_cocktail(const size_t id, _Out_ cocktail &c)
+{
+  lsResult result = lsR_Success;
+
+  // Scope Lock.
+  {
+    std::scoped_lock lock(_ThreadLock);
+    
+    LS_ERROR_CHECK(pool_get_safe(&_Cocktails, id, &c)); // FIX.
+  }
+
+epilogue:
+  return result;
+}
+
+lsResult add_cocktail(_Out_ size_t &id, _Out_ raw_string &name)
+{
+  lsResult result = lsR_Success;
+
+  const cocktail c = generate_cocktail();
+  name.text = c.name.text; // is this allowed?
+
+  // Scope Lock.
+  {
+    std::scoped_lock lock(_ThreadLock);
+
+    LS_ERROR_CHECK(pool_add(&_Cocktails, c, &id));
+  }
+
+epilogue:
+  return result;
+}
+
+lsResult update_cocktail(const size_t id)
+{
+  lsResult result = lsR_Success;
+  
+  raw_string i;
+  generate_instructions(i);
+
+  // Scope Lock.
+  {
+    std::scoped_lock lock(_ThreadLock);
+
+    LS_ERROR_IF(!pool_has(_Cocktails, id), lsR_InvalidParameter);
+    pool_get(_Cocktails, id)->instructions.text = i.text; // is this allowed?
+  }
+
+epilogue:
+  return result;
+}
+
+lsResult remove_cocktail(const size_t id)
+{
+  lsResult result = lsR_Success;
+
+  // Scope Lock.
+  {
+    std::scoped_lock lock(_ThreadLock);
+
+    LS_ERROR_CHECK(pool_remove_safe(&_Cocktails, id));
   }
 
 epilogue:
