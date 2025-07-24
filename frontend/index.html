@@ -92,11 +92,23 @@
     alert('Failure when loading backend URL.');
   }
 
+  function handle_add() {
+
+  }
+
+  function handle_update() {
+
+  }
+
+  function handle_remove() {
+    
+  }
+
   function fill_cocktail_view(payload) {
-    document.getElementById("title").innerHTML = payload.title;
-    document.getElementById("author").innerHTML = payload.author;
+    document.getElementById("title").innerText = payload.title;
+    document.getElementById("author").innerText = payload.author;
     let i = payload.instructions.replace(/\n/g, "<br>")
-    document.getElementById("instructions").innerHTML = i;
+    document.getElementById("instructions").innerText = i;
   }
 
   function handle_click(id) {
