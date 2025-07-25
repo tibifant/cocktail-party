@@ -342,7 +342,7 @@ epilogue:
 lsResult get_cocktail(const size_t id, _Out_ cocktail *pCocktail)
 {
   lsResult result = lsR_Success;
-  
+
   lsAssert(pCocktail == nullptr);
 
   // Scope Lock.

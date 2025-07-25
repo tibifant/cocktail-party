@@ -14,6 +14,9 @@ namespace asio
     template <typename Exception>
     void throw_exception(const Exception &e)
     {
+#ifdef _MSC_VER
+      __debugbreak(); // windows only, sorry!
+#endif
       printf("Exception thrown: %s.\n", e.what());
     }
   }
@@ -45,8 +48,6 @@ namespace asio
 //////////////////////////////////////////////////////////////////////////
 
 #include "cocktail_party.h"
-#include "sformat.h"
-#include "raw_string.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -58,18 +59,24 @@ crow::response handle_delete(const crow::request &req);
 
 //////////////////////////////////////////////////////////////////////////
 
-std::atomic<bool> _IsRunning = true;
 static std::mutex _ThreadLock;
 
 //////////////////////////////////////////////////////////////////////////
 
 int32_t main(void)
 {
+  for (size_t i = 0; i < 6; i++)
+  {
+    size_t _unused;
+    if (LS_FAILED(add_cocktail(_unused)))
+      print_error_line("Failed to add inital cocktail");
+  }
+
   crow::App<crow::CORSHandler> app;
 
   auto &cors = app.get_middleware<crow::CORSHandler>();
 #ifndef COCKTAILPARTY_LOCALHOST
-  cors.global().origin(SCHEDD_HOSTNAME);
+  cors.global().origin(COCKTAILPARTY_HOSTNAME);
 #else
   cors.global().origin("*");
 #endif
@@ -81,8 +88,6 @@ int32_t main(void)
   CROW_ROUTE(app, "/remove").methods(crow::HTTPMethod::POST)([](const crow::request &req) { return handle_delete(req); });
 
   app.port(61919).multithreaded().run();
-
-  _IsRunning = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -118,15 +123,15 @@ crow::response handle_get(const crow::request &req)
 
   size_t id = body["id"].i();
 
-  cocktail c;
+  cocktail *pCocktail = nullptr;
 
-  if (LS_FAILED(get_cocktail(id, &c)))
+  if (LS_FAILED(get_cocktail(id, pCocktail)))
     return crow::response(crow::status::INTERNAL_SERVER_ERROR);
 
   crow::json::wvalue ret;
-  ret["title"] = c.title.text;
-  ret["author"] = c.author_name.text;
-  ret["instructions"] = c.instructions.text;
+  ret["title"] = pCocktail->title.text;
+  ret["author"] = pCocktail->author_name.text;
+  ret["instructions"] = pCocktail->instructions.text;
 
   return ret;
 }

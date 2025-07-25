@@ -23,7 +23,7 @@
   </div>
 
 <script>
-  const server_url = document.location.hostname == 'localhost' || 'http://localhost:21110/';
+  const server_url = document.location.hostname == 'localhost' || 'http://localhost:61919/';
 
   function load_url(url, callback, payload, failure_callback) {
     var xmlhttp;
@@ -92,22 +92,27 @@
     alert('Failure when loading backend URL.');
   }
 
-  function handle_add() {
+  function on_add(payload) {
+    reset_view();
+    handle_click(payload.id);
+  }
 
+  function handle_add() {
+    load_backend_url('add', on_add, { }, on_failure);
   }
 
   function handle_update() {
-
+    load_backend_url('update', fill_cocktail_view, { id: __id }, on_failure)
   }
 
   function handle_remove() {
-    
+    load_backend_url('remove', reset_view, { id : __id }, on_failure);
   }
 
   function fill_cocktail_view(payload) {
     document.getElementById("title").innerText = payload.title;
     document.getElementById("author").innerText = payload.author;
-    let i = payload.instructions.replace(/\n/g, "<br>")
+    let i = payload.instructions.replace(/\n/g, "<br>");
     document.getElementById("instructions").innerText = i;
   }
 
@@ -118,21 +123,34 @@
 
   function generate_list(payload) {
     let list = document.getElementById('list');
+    list.innerHTML = '';
 
     for (e of payload) {
-      let elem = append_element(list, e.title, 'list_button');
+      let elem = append_element(list, 'li', 'list_button');
       
       (() => { // scope to capture value of id
-          let _id = e.id;
-          elem.addEventListener('click', () => { handle_click(_id); });
-        })();
+        elem.innerText = e.title;
+        let _id = e.id;
+        elem.addEventListener('click', () => { handle_click(_id); });
+      })();
     }
   }
-
-  // setup: call get list
-  function setup() {
+  
+  function reset_view() {
     __id = -1;
+    document.getElementById("title").innerText = "";
+    document.getElementById("author").innerText = "";
+    document.getElementById("instructions").innerText = "";
+    
     load_backend_url('get_list', generate_list, {}, on_failure);
+  }
+
+  function setup() {
+    document.getElementById('add').onclick = handle_add;
+    document.getElementById('update').onclick = handle_update;
+    document.getElementById('remove').onclick = handle_remove ;
+
+    reset_view();
   }
 
   document.addEventListener('DOMContentLoaded', setup);
