@@ -102,18 +102,20 @@
   }
 
   function handle_update() {
-    load_backend_url('update', fill_cocktail_view, { id: __id }, on_failure)
+    if (__id > 0)
+      load_backend_url('update', fill_cocktail_view, { id: __id }, on_failure)
   }
 
   function handle_remove() {
-    load_backend_url('remove', reset_view, { id : __id }, on_failure);
+    if (__id > 0)
+      load_backend_url('remove', reset_view, { id : __id }, on_failure);
   }
 
   function fill_cocktail_view(payload) {
-    document.getElementById("title").innerText = payload.title;
-    document.getElementById("author").innerText = payload.author;
+    document.getElementById('title').innerText = payload.title;
+    document.getElementById('author').innerText = payload.author;
     let i = payload.instructions.replace(/\n/g, "<br>");
-    document.getElementById("instructions").innerText = i;
+    document.getElementById('instructions').innerText = i;
   }
 
   function handle_click(id) {
@@ -138,9 +140,9 @@
   
   function reset_view() {
     __id = -1;
-    document.getElementById("title").innerText = "";
-    document.getElementById("author").innerText = "";
-    document.getElementById("instructions").innerText = "";
+    document.getElementById('title').innerText = '';
+    document.getElementById('author').innerText = '';
+    document.getElementById('instructions').innerText = '';
     
     load_backend_url('get_list', generate_list, {}, on_failure);
   }
