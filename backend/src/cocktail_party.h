@@ -18,7 +18,7 @@ struct cocktail_info
 };
 
 lsResult get_cocktails(_Out_ small_list<cocktail_info> &list);
-lsResult get_cocktail(const size_t id, _Out_ cocktail *pCocktail);
+lsResult get_cocktail(const size_t id, _Out_ cocktail **pCocktail);
 lsResult add_cocktail(_Out_ size_t &id);
 lsResult update_cocktail(const size_t id);
 lsResult remove_cocktail(const size_t id);

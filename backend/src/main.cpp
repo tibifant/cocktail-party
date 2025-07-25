@@ -123,9 +123,9 @@ crow::response handle_get(const crow::request &req)
 
   size_t id = body["id"].i();
 
-  cocktail *pCocktail = nullptr;
+  cocktail *pCocktail = nullptr; // do I need to free this?
 
-  if (LS_FAILED(get_cocktail(id, pCocktail)))
+  if (LS_FAILED(get_cocktail(id, &pCocktail)))
     return crow::response(crow::status::INTERNAL_SERVER_ERROR);
 
   crow::json::wvalue ret;

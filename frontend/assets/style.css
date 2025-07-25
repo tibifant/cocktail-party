@@ -48,6 +48,7 @@ body {
 }
 
 #app_container {
+  color: #aaa;
   margin: 0;
   background: #1a1a1a;
   width: 100vw;
@@ -61,16 +62,6 @@ body {
   margin: 1pt 5pt;
 }
 
-div.header_search {
-  margin: 2pt 20%;
-  position: fixed;
-}
-
-div.menu {
-  margin: 2pt 90%;
-  position: fixed;
-}
-
 div.box {
   display: block;
   margin: 50pt auto;
@@ -82,54 +73,6 @@ div.box {
   font-family: 'Segoe UI', sans-serif;
 }
 
-div.login {
-  display: none;
-}
-
-div.main {
-  display: block;
-}
-
-div.schedule {
-  display: none;
-}
-
-div.task_creation {
-  display: none;
-  position: fixed;
-}
-
-div.user_edit {
-  display: none;
-  position: fixed;
-}
-
-div.user_search {
-  display: none;
-  position: fixed;
-}
-
-div.user_registration {
-  display: none;
-}
-
-div.overview {
-  display: none;
-}
-
-div.task_search {
-  display: none;
-}
-
-div.task {
-  display: none;
-}
-
 li.selected {
   color: #a8a8a8
-}
-
-failure_message {
-  display: none;
-  color: #ffad10;
 }

@@ -339,17 +339,17 @@ epilogue:
   return result;
 }
 
-lsResult get_cocktail(const size_t id, _Out_ cocktail *pCocktail)
+lsResult get_cocktail(const size_t id, _Out_ cocktail **pCocktail)
 {
   lsResult result = lsR_Success;
 
-  lsAssert(pCocktail == nullptr);
+  lsAssert(*pCocktail == nullptr);
 
   // Scope Lock.
   {
     std::scoped_lock lock(_ThreadLock);
     
-    LS_ERROR_CHECK(pool_get_safe(&_Cocktails, id, &pCocktail));
+    LS_ERROR_CHECK(pool_get_safe(&_Cocktails, id, pCocktail));
   }
 
 epilogue:
@@ -387,7 +387,7 @@ lsResult update_cocktail(const size_t id)
 
     LS_ERROR_IF(!pool_has(_Cocktails, id), lsR_InvalidParameter);
     
-    cocktail *pCocktail = nullptr;
+    cocktail *pCocktail = nullptr; // do I need to free this?
     LS_ERROR_CHECK(pool_get_safe(&_Cocktails, id, &pCocktail));
     pCocktail->instructions = std::move(i);
   }

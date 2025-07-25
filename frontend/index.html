@@ -15,7 +15,7 @@
     <ul id="list"></ul>
     <box>
       <h3 id="title"></h3>
-      <p>by <a id="author"></a></p>
+      <p id="author"></p>
       <p id="instructions"></p>
       <button id="update">Update</button>
       <button id="remove">Delete</button>
@@ -103,7 +103,7 @@
 
   function handle_update() {
     if (__id > 0)
-      load_backend_url('update', fill_cocktail_view, { id: __id }, on_failure)
+      load_backend_url('update', () => { load_backend_url('get', fill_cocktail_view, { id: __id }, on_failure); }, { id: __id }, on_failure);
   }
 
   function handle_remove() {
@@ -113,9 +113,9 @@
 
   function fill_cocktail_view(payload) {
     document.getElementById('title').innerText = payload.title;
-    document.getElementById('author').innerText = payload.author;
+    document.getElementById('author').innerText = 'by ' + payload.author;
     let i = payload.instructions.replace(/\n/g, "<br>");
-    document.getElementById('instructions').innerText = i;
+    document.getElementById('instructions').innerHTML = i;
   }
 
   function handle_click(id) {
@@ -129,9 +129,9 @@
 
     for (e of payload) {
       let elem = append_element(list, 'li', 'list_button');
+      elem.innerText = e.title;
       
       (() => { // scope to capture value of id
-        elem.innerText = e.title;
         let _id = e.id;
         elem.addEventListener('click', () => { handle_click(_id); });
       })();
