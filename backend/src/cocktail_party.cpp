@@ -387,7 +387,7 @@ lsResult update_cocktail(const size_t id)
 
     LS_ERROR_IF(!pool_has(_Cocktails, id), lsR_InvalidParameter);
     
-    cocktail *pCocktail = nullptr; // do I need to free this?
+    cocktail *pCocktail = nullptr;
     LS_ERROR_CHECK(pool_get_safe(&_Cocktails, id, &pCocktail));
     pCocktail->instructions = std::move(i);
   }
