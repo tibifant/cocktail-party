@@ -30,7 +30,22 @@ inline lsResult string_append(raw_string &str, T text)
   return string_append(str, text, lsStringLength(text));
 }
 
-void string_destroy(raw_string &str);
+inline void string_clear(raw_string &str)
+{
+  if (str.text == nullptr)
+    return;
+
+  str.capacity = 0;
+  str.bytes = 0;
+  str.text[0] = '\0';
+}
+
+inline void string_destroy(raw_string &str)
+{
+  str.bytes = 0;
+  str.capacity = 0;
+  lsFreePtr(&str.text);
+}
 
 inline raw_string::raw_string(raw_string &&mv) : text(mv.text), bytes(mv.bytes), capacity(mv.capacity)
 {
@@ -41,6 +56,8 @@ inline raw_string::raw_string(raw_string &&mv) : text(mv.text), bytes(mv.bytes),
 
 inline raw_string &raw_string::operator=(raw_string &&mv)
 {
+  string_clear(*this);
+
   std::swap(text, mv.text);
   std::swap(bytes, mv.bytes);
   std::swap(capacity, mv.capacity);

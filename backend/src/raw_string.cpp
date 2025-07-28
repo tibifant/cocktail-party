@@ -48,10 +48,3 @@ lsResult string_append(raw_string &str, const char *text, const size_t bytes)
 epilogue:
   return result;
 }
-
-void string_destroy(raw_string &str)
-{
-  str.bytes = 0;
-  str.capacity = 0;
-  lsFreePtr(&str.text);
-}

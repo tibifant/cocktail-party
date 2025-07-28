@@ -56,17 +56,24 @@ crow::response handle_get_list(const crow::request &req);
 crow::response handle_get(const crow::request &req);
 crow::response handle_add(const crow::request &req);
 crow::response handle_update(const crow::request &req);
-crow::response handle_delete(const crow::request &req);
+crow::response handle_remove(const crow::request &req);
 
 //////////////////////////////////////////////////////////////////////////
 
 static std::mutex _ThreadLock;
-crow::App<crow::CORSHandler> app;
 
 //////////////////////////////////////////////////////////////////////////
 
-int32_t main(void)
+int32_t main(const int32_t argc, char **pArgv)
 {
+  bool runTests = false;
+
+  for (size_t i = 1; i < (size_t)argc; i++)
+  {
+    if (lsStringEquals("--run-tests", pArgv[i]))
+      runTests = true;
+  }
+
   for (size_t i = 0; i < 6; i++)
   {
     size_t _unused;
@@ -74,6 +81,7 @@ int32_t main(void)
       print_error_line("Failed to add inital cocktail");
   }
 
+  crow::App<crow::CORSHandler> app;
   auto &cors = app.get_middleware<crow::CORSHandler>();
 #ifndef COCKTAILPARTY_LOCALHOST
   cors.global().origin(COCKTAILPARTY_HOSTNAME);
@@ -85,9 +93,12 @@ int32_t main(void)
   CROW_ROUTE(app, "/get").methods(crow::HTTPMethod::POST)([](const crow::request &req) { return handle_get(req); });
   CROW_ROUTE(app, "/add").methods(crow::HTTPMethod::POST)([](const crow::request &req) { return handle_add(req); });
   CROW_ROUTE(app, "/update").methods(crow::HTTPMethod::POST)([](const crow::request &req) { return handle_update(req); });
-  CROW_ROUTE(app, "/remove").methods(crow::HTTPMethod::POST)([](const crow::request &req) { return handle_delete(req); });
+  CROW_ROUTE(app, "/remove").methods(crow::HTTPMethod::POST)([](const crow::request &req) { return handle_remove(req); });
 
-  app.port(61919).multithreaded().run();
+  if (runTests)
+    run_testables();
+  else
+    app.port(61919).multithreaded().run();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -130,7 +141,7 @@ crow::response handle_get(const crow::request &req)
 
   crow::json::wvalue ret;
   ret["title"] = pCocktail->title.text;
-  ret["author"] = pCocktail->author_name.text;
+  ret["author"] = pCocktail->author.text;
   ret["instructions"] = pCocktail->instructions.text;
 
   return ret;
@@ -166,7 +177,7 @@ crow::response handle_update(const crow::request &req)
   return crow::response(crow::status::OK);
 }
 
-crow::response handle_delete(const crow::request &req)
+crow::response handle_remove(const crow::request &req)
 {
   auto body = crow::json::load(req.body);
 
@@ -190,11 +201,8 @@ DEFINE_TESTABLE(get_list_test)
   lsResult result = lsR_Success;
 
   crow::request req;
-  req.url = "/get_list";
-
-  crow::response res;
-  app.handle_full(req, res);
-  TESTABLE_ASSERT_FALSE(res.code == crow::status::INTERNAL_SERVER_ERROR);
+  crow::response res = handle_get_list(req);
+  TESTABLE_ASSERT_NOT_EQUAL(res.code, crow::status::INTERNAL_SERVER_ERROR);
 
   {
     auto b = crow::json::load(res.body);
@@ -207,6 +215,7 @@ DEFINE_TESTABLE(get_list_test)
 
     for (const cocktail_info &c : l)
     {
+      i++;
       TESTABLE_ASSERT_TRUE(b[i].has("id"));
       TESTABLE_ASSERT_EQUAL(c.id, b[i]["id"].u());
       TESTABLE_ASSERT_TRUE(b[i].has("title"));
@@ -224,34 +233,30 @@ DEFINE_TESTABLE(get_test)
   lsResult result = lsR_Success;
 
   crow::request req;
-  req.url = "/get";
 
   {
-    crow::response failRes;
-    app.handle_full(req, failRes);
-    TESTABLE_ASSERT_TRUE(failRes.code == crow::status::BAD_REQUEST);
+    crow::response res = handle_get(req);
+    TESTABLE_ASSERT_EQUAL(res.code, crow::status::BAD_REQUEST);
   }
 
   {
-    crow::response failRes;
     req.body = "{\"id\":-1}";
-    app.handle_full(req, failRes);
-    TESTABLE_ASSERT_TRUE(failRes.code == crow::status::BAD_REQUEST);
+    crow::response res = handle_get(req);
+    TESTABLE_ASSERT_EQUAL(res.code, crow::status::BAD_REQUEST);
   }
 
   {
     req.body = "{\"id\":0}";
-    crow::response res;
-    app.handle_full(req, res);
+    crow::response res = handle_get(req);
     auto b = crow::json::load(res.body);
 
-    cocktail *pCocktail;
+    cocktail *pCocktail = nullptr;
     TESTABLE_ASSERT_SUCCESS(get_cocktail(0, &pCocktail));
 
-    TESTABLE_ASSERT_FALSE(res.code == crow::status::BAD_REQUEST);
-    TESTABLE_ASSERT_FALSE(res.code == crow::status::INTERNAL_SERVER_ERROR);
+    TESTABLE_ASSERT_NOT_EQUAL(res.code, crow::status::BAD_REQUEST);
+    TESTABLE_ASSERT_NOT_EQUAL(res.code, crow::status::INTERNAL_SERVER_ERROR);
     TESTABLE_ASSERT_TRUE(b.has("author"));
-    TESTABLE_ASSERT_EQUAL(strcmp(pCocktail->author_name.text, std::string(b["author"]).c_str()), 0);
+    TESTABLE_ASSERT_EQUAL(strcmp(pCocktail->author.text, std::string(b["author"]).c_str()), 0);
     TESTABLE_ASSERT_TRUE(b.has("title"));
     TESTABLE_ASSERT_EQUAL(strcmp(pCocktail->title.text, std::string(b["title"]).c_str()), 0);
     TESTABLE_ASSERT_TRUE(b.has("instructions"));
@@ -272,13 +277,10 @@ DEFINE_TESTABLE(add_test)
 
   {
     crow::request req;
-    req.url = "/add";
-
-    crow::response res;
-    app.handle_full(req, res);
+    crow::response res = handle_add(req);
     auto b = crow::json::load(res.body);
 
-    TESTABLE_ASSERT_FALSE(res.code == crow::status::INTERNAL_SERVER_ERROR);
+    TESTABLE_ASSERT_NOT_EQUAL(res.code, crow::status::INTERNAL_SERVER_ERROR);
     TESTABLE_ASSERT_TRUE(b.has("id"));
 
     small_list<cocktail_info> lAfter;
@@ -296,59 +298,67 @@ DEFINE_TESTABLE(update_test)
 {
   lsResult result = lsR_Success;
 
-  cocktail *pBefore = nullptr;
-  TESTABLE_ASSERT_SUCCESS(get_cocktail(0, &pBefore)); // TODO: copy
+  crow::request req;
+
+  cocktail *pCocktail = nullptr;
+  cocktail before;
+  TESTABLE_ASSERT_SUCCESS(get_cocktail(0, &pCocktail));
+  TESTABLE_ASSERT_SUCCESS(copy(*pCocktail, before));
 
   {
-    crow::request req;
-    req.url = "/update";
-    req.body = "{\"id\":0}";
-
-    crow::response res;
-    app.handle_full(req, res);
-    auto b = crow::json::load(res.body);
-
-    TESTABLE_ASSERT_FALSE(res.code == crow::status::INTERNAL_SERVER_ERROR);
+    crow::response res = handle_update(req);
+    TESTABLE_ASSERT_EQUAL(res.code, crow::status::BAD_REQUEST);
   }
 
-  TESTABLE_ASSERT_NOT_EQUAL();
+  {
+    req.body = "{\"id\":-1}";
+    crow::response res = handle_update(req);
+    TESTABLE_ASSERT_EQUAL(res.code, crow::status::BAD_REQUEST);
+  }
 
+  {
+    req.body = "{\"id\":0}";
+    crow::response res = handle_update(req);
+    auto b = crow::json::load(res.body);
+
+    TESTABLE_ASSERT_NOT_EQUAL(res.code, crow::status::INTERNAL_SERVER_ERROR);
+  }
+
+  TESTABLE_ASSERT_NOT_EQUAL(strcmp(pCocktail->instructions.text, before.instructions.text), 0);
 
   goto epilogue;
 epilogue:
   return result;
 }
 
-DEFINE_TESTABLE(add_get_update_remove_test)
+DEFINE_TESTABLE(remove_test)
 {
   lsResult result = lsR_Success;
 
-  // test 3:
-  // add via add_cocktail
-  // remove via crow
-  // assert its gone via get_cocktail
-
-  small_list<cocktail_info> lBefore;
-  small_list<cocktail_info> lAfterAdd;
-  crow::response resAdd;
-
-  crow::request reqAdd;
-  reqAdd.url = "/add";
-  TESTABLE_ASSERT_SUCCESS(get_cocktails(lBefore));
-  app.handle_full(reqAdd, resAdd);
-  TESTABLE_ASSERT_FALSE(resAdd.code == crow::status::INTERNAL_SERVER_ERROR);
-  TESTABLE_ASSERT_SUCCESS(get_cocktails(lAfterAdd));
-  TESTABLE_ASSERT_TRUE(lBefore.count < lAfterAdd.count);
-
-  // get with response body from add
-  // compare with list entry at same position
-  // remove with id from add
-  // compare list before and after
   crow::request req;
-  req.body = "{\"id\":0}";
 
-  const crow::response r = handle_get(crow::request());
-  TESTABLE_ASSERT_FALSE(r.code == crow::status::INTERNAL_SERVER_ERROR);
+  size_t id;
+  TESTABLE_ASSERT_SUCCESS(add_cocktail(id));
+
+  {
+    crow::response res = handle_remove(req);
+    TESTABLE_ASSERT_EQUAL(res.code, crow::status::BAD_REQUEST);
+  }
+
+  {
+    req.body = "{\"id\":-1}";
+    crow::response res = handle_remove(req);
+    TESTABLE_ASSERT_EQUAL(res.code, crow::status::INTERNAL_SERVER_ERROR);
+  }
+
+  {
+    req.body = std::string(sformat("{\"id\":", id, "}"));
+    crow::response res = handle_remove(req);
+    cocktail *pUnused = nullptr;
+
+    TESTABLE_ASSERT_NOT_EQUAL(res.code, crow::status::INTERNAL_SERVER_ERROR);
+    TESTABLE_ASSERT_FAILURE(get_cocktail(id, &pUnused));
+  }
 
   goto epilogue;
 epilogue:

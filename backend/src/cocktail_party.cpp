@@ -306,7 +306,7 @@ lsResult generate_cocktail(_Out_ cocktail &ret)
   lsResult result = lsR_Success;
 
   LS_ERROR_CHECK(generate_cocktail_title(ret.title));
-  LS_ERROR_CHECK(generate_author(ret.author_name));
+  LS_ERROR_CHECK(generate_author(ret.author));
   LS_ERROR_CHECK(generate_instructions(ret.instructions));
 
 epilogue:

@@ -7,9 +7,25 @@
 struct cocktail
 {
   raw_string title;
-  raw_string author_name;
+  raw_string author;
   raw_string instructions;
 };
+
+inline lsResult copy(const cocktail &src, _Out_ cocktail &ret)
+{
+  lsResult result = lsR_Success;
+
+  string_clear(ret.title);
+  string_clear(ret.author);
+  string_clear(ret.instructions);
+
+  LS_ERROR_CHECK(string_append(ret.title, src.title));
+  LS_ERROR_CHECK(string_append(ret.author, src.author));
+  LS_ERROR_CHECK(string_append(ret.instructions, src.instructions));
+
+epilogue:
+  return result;
+}
 
 struct cocktail_info
 {
