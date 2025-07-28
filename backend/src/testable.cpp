@@ -22,7 +22,7 @@ _testable_init register_testable(const char *name, testable_func func)
 
 lsResult run_testables()
 {
-  register_testable_files<testable_file_count>();
+  register_testable_files<testable_file_count>::handle();
 
   lsResult result = lsR_Success;
 

@@ -399,7 +399,7 @@ struct sformatState
 
   sformatState() = default;
   sformatState(const sformatState &copy) = default;
-  inline sformatState & operator = (const sformatState &move) = default;
+  inline sformatState &operator = (const sformatState &move) = default;
 
   inline void SetTo(const sformatState &cp)
   {
@@ -1046,6 +1046,11 @@ inline size_t _sformat_Append(const unsigned int value, const sformatState &fs, 
 inline size_t _sformat_Append(const unsigned short value, const sformatState &fs, char *text) { return _sformat_Append((uint64_t)value, fs, text); }
 inline size_t _sformat_Append(const unsigned char value, const sformatState &fs, char *text) { return _sformat_Append((uint64_t)value, fs, text); }
 
+#ifndef _MSC_VER
+inline size_t _sformat_Append(const unsigned long long value, const sformatState &fs, char *text) { return _sformat_Append((uint64_t)value, fs, text); }
+inline size_t _sformat_Append(const long long value, const sformatState &fs, char *text) { return _sformat_Append((uint64_t)value, fs, text); }
+#endif
+
 size_t _sformat_AppendStringWithLength(const char *value, const size_t length, const sformatState &fs, char *text);
 
 template <size_t TCount>
@@ -1213,7 +1218,7 @@ struct _sformatType_Wrapper
 {
   const T &value;
 
-  _sformatType_Wrapper(const T &value) : value(value) { }
+  _sformatType_Wrapper(const T &value) : value(value) {}
 };
 
 template <typename T, typename ... Args>
@@ -1221,7 +1226,7 @@ struct _sformatTypeInstance_Wrapper
 {
   const T value;
 
-  _sformatTypeInstance_Wrapper(const T value) : value(value) { }
+  _sformatTypeInstance_Wrapper(const T value) : value(value) {}
 };
 
 #define _M_FORMAT_DEFINE_SPECIALIZED_ALIAS(name, type) \

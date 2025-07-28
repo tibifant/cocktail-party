@@ -28,7 +28,7 @@ lsResult string_append(raw_string &str, const char *text, const size_t bytes)
     if (text[len - 1] == '\0')
       len--;
 
-    const size_t combinedLength = lsMax(str.bytes, 1) + len;
+    const size_t combinedLength = lsMax(str.bytes, 1ULL) + len;
 
     // Grow if we need to grow.
     if (str.capacity <= combinedLength)
