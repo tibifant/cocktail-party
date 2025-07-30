@@ -1,3 +1,8 @@
+newoption {
+  trigger     = "test-coverage",
+  description = "Build with test coverage"
+}
+
 solution "cocktail-party"
   
   editorintegration "On"

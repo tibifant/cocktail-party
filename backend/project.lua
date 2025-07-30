@@ -74,6 +74,11 @@ rtti "On"
 floatingpoint "Fast"
 exceptionhandling "On"
 
+if _OPTIONS['test-coverage'] then
+    buildoptions { "-fprofile-instr-generate", "-fcoverage-mapping" }
+    linkoptions { "-fprofile-instr-generate", "-fcoverage-mapping" }
+end
+
 filter { "configurations:Debug*" }
 	defines { "_DEBUG" }
 	optimize "Off"

@@ -276,3 +276,9 @@ Makefile
 *.h.gch
 builds/*
 * Advisor Results */
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

@@ -35,6 +35,6 @@ struct cocktail_info
 
 lsResult get_cocktails(_Out_ small_list<cocktail_info> &list);
 lsResult get_cocktail(const size_t id, _Out_ cocktail **pCocktail);
-lsResult add_cocktail(_Out_ size_t &id);
-lsResult update_cocktail(const size_t id);
+lsResult add_cocktail(_Out_ size_t &id, rand_seed &seed);
+lsResult update_cocktail(const size_t id, rand_seed &seed);
 lsResult remove_cocktail(const size_t id);

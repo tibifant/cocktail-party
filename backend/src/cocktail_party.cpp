@@ -39,14 +39,14 @@ static const char *CookingUtensils[] = { "Pan", "Oven", "Mixer", "Shaker", "Kniv
 
 static const char *InstructionEndings[] = { "Serve cold.", "Serve with Lime Juice.", "Serve immediately!", "Immediately serve in a Mug.", "Enjoy!", "Pour into a Martini Glass and serve.", "Garnish with an Olive and serve.", "Serve while stirring thoroughly.", "Serve on Ice.", "Serve warm.", "Serve on a warm summer night.", "Enjoy with friends!", "Bon Appetit!", "Decorate with a Cocktail Umbrella and serve." };
 
-lsResult generate_cocktail_title(_Out_ raw_string &title)
+lsResult generate_cocktail_title(_Out_ raw_string &title, rand_seed &seed)
 {
   lsResult result = lsR_Success;
 
   constexpr size_t ChanceIngridientAttribute = 40;
   constexpr size_t ChanceCocktailAttribute = 10;
 
-  uint64_t rnd = lsGetRand();
+  uint64_t rnd = lsGetRand(seed);
 
   const size_t idxIngridientPrefixA = rnd % LS_ARRAYSIZE(IngridientPrefixes);
   rnd >>= 5;
@@ -100,7 +100,7 @@ lsResult generate_cocktail_title(_Out_ raw_string &title)
     else
     {
       const size_t idxCocktailAttribute = rnd % LS_ARRAYSIZE(CocktailAttributesPrefix);
-      rnd <<= 5;
+      rnd >>= 5;
       const size_t idxNonBeverageB = rnd % LS_ARRAYSIZE(NonBeverages);
 
       LS_ERROR_CHECK(string_append(title, CocktailAttributesPrefix[idxCocktailAttribute]));
@@ -113,13 +113,13 @@ epilogue:
   return result;
 }
 
-lsResult generate_author(_Out_ raw_string &name)
+lsResult generate_author(_Out_ raw_string &name, rand_seed &seed)
 {
   lsResult result = lsR_Success;
 
   constexpr uint8_t ChanceSecondName = 35;
 
-  uint64_t rnd = lsGetRand();
+  uint64_t rnd = lsGetRand(seed);
   const size_t idxFirstName = rnd % LS_ARRAYSIZE(AuthorFirstnames);
   rnd >>= 5;
   const size_t randChanceSecondName = rnd % 100;
@@ -146,13 +146,13 @@ epilogue:
   return result;
 }
 
-lsResult generate_measurement(_Out_ raw_string &text)
+lsResult generate_measurement(_Out_ raw_string &text, rand_seed &seed)
 {
   lsResult result = lsR_Success;
 
   constexpr size_t MaxAmount = 200;
 
-  uint64_t rnd = lsGetRand();
+  uint64_t rnd = lsGetRand(seed);
 
   const size_t amount = rnd % MaxAmount;
   rnd >>= 5;
@@ -171,14 +171,14 @@ epilogue:
   return result;
 }
 
-lsResult generate_ingridient(_Out_ raw_string &text)
+lsResult generate_ingridient(_Out_ raw_string &text, rand_seed &seed)
 {
   lsResult result = lsR_Success;
 
   constexpr size_t BeverageChance = 40;
   constexpr size_t NonBeverageAttributesChance = 10;
 
-  uint64_t rnd = lsGetRand();
+  uint64_t rnd = lsGetRand(seed);
 
   const size_t chanceBeverage = rnd % 100;
   rnd >>= 5;
@@ -214,7 +214,7 @@ epilogue:
   return result;
 }
 
-lsResult generate_instructions(_Out_ raw_string &instructions)
+lsResult generate_instructions(_Out_ raw_string &instructions, rand_seed &seed)
 {
   lsResult result = lsR_Success;
 
@@ -223,7 +223,7 @@ lsResult generate_instructions(_Out_ raw_string &instructions)
   constexpr size_t MeasurementChance = 25;
   constexpr size_t AdverbChance = 40;
 
-  uint64_t rnd = lsGetRand();
+  uint64_t rnd = lsGetRand(seed);
 
   const size_t instructionCount = (rnd % (MaxInstructions - 1)) + 1;
   rnd >>= 5;
@@ -232,7 +232,7 @@ lsResult generate_instructions(_Out_ raw_string &instructions)
 
   for (size_t i = 0; i < instructionCount; i++)
   {
-    uint64_t rndInner = lsGetRand();
+    uint64_t rndInner = lsGetRand(seed);
 
     const size_t chanceSingleInstuction = rndInner % 100;
     rndInner >>= 5;
@@ -259,7 +259,7 @@ lsResult generate_instructions(_Out_ raw_string &instructions)
 
       if (chanceMeasurement > MeasurementChance)
       {
-        generate_measurement(instructions);
+        generate_measurement(instructions, seed);
         LS_ERROR_CHECK(string_append(instructions, " "));
       }
       else
@@ -267,7 +267,7 @@ lsResult generate_instructions(_Out_ raw_string &instructions)
         LS_ERROR_CHECK(string_append(instructions, "the "));
       }
 
-      generate_ingridient(instructions);
+      generate_ingridient(instructions, seed);
 
       const size_t chanceAdverb = rndInner % 100;
       rndInner >>= 5;
@@ -301,13 +301,13 @@ epilogue:
   return result;
 }
 
-lsResult generate_cocktail(_Out_ cocktail &ret)
+lsResult generate_cocktail(_Out_ cocktail &ret, rand_seed &seed)
 {
   lsResult result = lsR_Success;
 
-  LS_ERROR_CHECK(generate_cocktail_title(ret.title));
-  LS_ERROR_CHECK(generate_author(ret.author));
-  LS_ERROR_CHECK(generate_instructions(ret.instructions));
+  LS_ERROR_CHECK(generate_cocktail_title(ret.title, seed));
+  LS_ERROR_CHECK(generate_author(ret.author, seed));
+  LS_ERROR_CHECK(generate_instructions(ret.instructions, seed));
 
 epilogue:
   return result;
@@ -356,12 +356,12 @@ epilogue:
   return result;
 }
 
-lsResult add_cocktail(_Out_ size_t &id)
+lsResult add_cocktail(_Out_ size_t &id, rand_seed &seed)
 {
   lsResult result = lsR_Success;
 
   cocktail c;
-  LS_ERROR_CHECK(generate_cocktail(c));
+  LS_ERROR_CHECK(generate_cocktail(c, seed));
 
   // Scope Lock.
   {
@@ -374,12 +374,12 @@ epilogue:
   return result;
 }
 
-lsResult update_cocktail(const size_t id)
+lsResult update_cocktail(const size_t id, rand_seed &seed)
 {
   lsResult result = lsR_Success;
   
   raw_string i;
-  generate_instructions(i);
+  generate_instructions(i, seed);
 
   // Scope Lock.
   {

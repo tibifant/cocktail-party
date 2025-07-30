@@ -36,6 +36,7 @@ namespace asio
 #else
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wtype-limits"
+#pragma GCC diagnostic ignored "-Wnan-infinity-disabled"
 #endif
 #include "crow.h"
 #include "crow/middlewares/cors.h"
@@ -60,6 +61,10 @@ crow::response handle_remove(const crow::request &req);
 
 //////////////////////////////////////////////////////////////////////////
 
+std::optional<rand_seed> _CocktailSeed;
+
+//////////////////////////////////////////////////////////////////////////
+
 int32_t main(const int32_t argc, char **pArgv)
 {
   bool runTests = false;
@@ -70,11 +75,16 @@ int32_t main(const int32_t argc, char **pArgv)
       runTests = true;
   }
 
-  for (size_t i = 0; i < 6; i++)
+  if (runTests)
   {
-    size_t _unused;
-    if (LS_FAILED(add_cocktail(_unused)))
-      print_error_line("Failed to add inital cocktail");
+    _CocktailSeed = rand_seed(0xDEADF00DBABEFULL, 67890);
+
+    for (size_t i = 0; i < 1024; i++)
+    {
+      size_t _unused;
+      if (LS_FAILED(add_cocktail(_unused, _CocktailSeed.value())))
+        print_error_line("Failed to add inital cocktail");
+    }
   }
 
   crow::App<crow::CORSHandler> app;
@@ -149,7 +159,13 @@ crow::response handle_add(const crow::request &req)
 
   size_t id;
 
-  if (LS_FAILED(add_cocktail(id)))
+  rand_seed s = rand_seed();
+  rand_seed *pS = &s;
+
+  if (_CocktailSeed.has_value())
+    pS = &_CocktailSeed.value();
+
+  if (LS_FAILED(add_cocktail(id, *pS)))
     return crow::response(crow::status::INTERNAL_SERVER_ERROR);
 
   crow::json::wvalue ret;
@@ -167,7 +183,13 @@ crow::response handle_update(const crow::request &req)
 
   size_t id = body["id"].u();
 
-  if (LS_FAILED(update_cocktail(id)))
+  rand_seed s = rand_seed();
+  rand_seed *pS = &s;
+
+  if (_CocktailSeed.has_value())
+    pS = &_CocktailSeed.value();
+
+  if (LS_FAILED(update_cocktail(id, *pS)))
     return crow::response(crow::status::BAD_REQUEST);
 
   return crow::response(crow::status::OK);
@@ -334,7 +356,7 @@ DEFINE_TESTABLE(remove_test)
   crow::request req;
 
   size_t id;
-  TESTABLE_ASSERT_SUCCESS(add_cocktail(id));
+  TESTABLE_ASSERT_SUCCESS(add_cocktail(id, _CocktailSeed.value()));
 
   {
     crow::response res = handle_remove(req);
