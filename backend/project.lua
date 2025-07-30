@@ -38,6 +38,7 @@ project(ProjectName)
   files { "project.lua" }
 
   includedirs { "src**" }
+  includedirs { "src/*" }
   includedirs { "3rdParty/crow/include" }
   includedirs { "3rdParty/asio/include" }
 

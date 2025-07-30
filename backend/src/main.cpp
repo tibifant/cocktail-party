@@ -112,6 +112,20 @@ int32_t main(const int32_t argc, char **pArgv)
 
 //////////////////////////////////////////////////////////////////////////
 
+struct rand_seed_wrapper
+{
+  rand_seed s, *pSeed;
+
+  rand_seed_wrapper(std::optional<rand_seed> &seed) : pSeed(seed.has_value() ? &seed.value() : &s) {}
+
+  operator rand_seed &()
+  {
+    return *pSeed;
+  }
+};
+
+//////////////////////////////////////////////////////////////////////////
+
 crow::response handle_get_list(const crow::request &req)
 {
   (void)req;
@@ -162,13 +176,7 @@ crow::response handle_add(const crow::request &req)
 
   size_t id;
 
-  rand_seed s = rand_seed();
-  rand_seed *pS = &s;
-
-  if (_CocktailSeed.has_value())
-    pS = &_CocktailSeed.value();
-
-  if (LS_FAILED(add_cocktail(id, *pS)))
+  if (LS_FAILED(add_cocktail(id, rand_seed_wrapper(_CocktailSeed))))
     return crow::response(crow::status::INTERNAL_SERVER_ERROR);
 
   crow::json::wvalue ret;
@@ -186,13 +194,7 @@ crow::response handle_update(const crow::request &req)
 
   size_t id = body["id"].u();
 
-  rand_seed s = rand_seed();
-  rand_seed *pS = &s;
-
-  if (_CocktailSeed.has_value())
-    pS = &_CocktailSeed.value();
-
-  if (LS_FAILED(update_cocktail(id, *pS)))
+  if (LS_FAILED(update_cocktail(id, rand_seed_wrapper(_CocktailSeed))))
     return crow::response(crow::status::BAD_REQUEST);
 
   return crow::response(crow::status::OK);
