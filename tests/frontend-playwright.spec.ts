@@ -54,7 +54,7 @@ test.describe('Cocktail Party App', () => {
     await expect(instructions).not.toHaveText(oldInstructions || '');
   });
 
-  test('should remove a cocktail', async ({ page }) => {
+  test('remove cocktail', async ({ page }) => {
     const addButton = page.locator('#add');
     await addButton.click();
 

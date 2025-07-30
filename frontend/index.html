@@ -102,7 +102,7 @@
   }
 
   function handle_update() {
-    if (__id > 0)
+    if (__id > -1)
       load_backend_url('update', () => { load_backend_url('get', fill_cocktail_view, { id: __id }, on_failure); }, { id: __id }, on_failure);
   }
 
@@ -119,8 +119,8 @@
   }
 
   function handle_click(id) {
-    load_backend_url('get', fill_cocktail_view, { id: id }, on_failure);
     __id = id;
+    load_backend_url('get', fill_cocktail_view, { id: id }, on_failure);
   }
 
   function generate_list(payload) {

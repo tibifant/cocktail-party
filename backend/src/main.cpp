@@ -68,14 +68,17 @@ std::optional<rand_seed> _CocktailSeed;
 int32_t main(const int32_t argc, char **pArgv)
 {
   bool runTests = false;
+  bool runFrontendTests = false;
 
   for (size_t i = 1; i < (size_t)argc; i++)
   {
     if (lsStringEquals("--run-tests", pArgv[i]))
       runTests = true;
+    if (lsStringEquals("--run-frontend-tests", pArgv[i]))
+      runFrontendTests = true;
   }
 
-  if (runTests)
+  if (runTests || runFrontendTests)
   {
     _CocktailSeed = rand_seed(0xDEADF00DBABEFULL, 67890);
 
