@@ -1,0 +1,5 @@
+FROM amd64/ubuntu:noble
+
+RUN sudo apt update
+RUN sudo apt install llvm-18 clang-18 build-essential
+
