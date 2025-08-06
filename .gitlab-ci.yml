@@ -22,48 +22,29 @@ build-docker-build-image:
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
-      --destination "${CI_REGISTRY_IMAGE}${CI_COMMIT_TAG}"
+      --destination "${CI_REGISTRY_IMAGE}:build-image${CI_COMMIT_TAG}"
 
-release_build:
-  stage: build
-  image: registry.coco.study/students/ss25/devops/mlindne2/toolbox/build-image:latest
+build-docker-playwright-image:
+  stage: build-docker
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.2-debug
+    entrypoint: [""] # overwrite entrypoint ["/kaniko/executor"]
   script:
-    - buildscripts/release.sh
-  artifacts:
-    paths:
-      - backend/builds/bin
-    
-debug_build:
-  stage: build
-  image: registry.coco.study/students/ss25/devops/mlindne2/toolbox/build-image:latest
-  script:
-    - buildscripts/debug.sh
-
-# Can't have multiple artifacts with the same path
-#coverage_build:
-#  stage: build
-#  image: #Dockerfile
-#  script:
-#    - buildscripts/coverage.sh
-#  artifacts:
-    
-# how to serve the html?
-
-test_and_coverage:
-  stage: test
-  image: registry.coco.study/students/ss25/devops/mlindne2/toolbox/build-image:latest
-  script:
-    - buildscripts/coverage.sh
-  coverage: /TOTAL\s+\d+\s+\d+\s+\d+\.\d+\%\s+\d+\s+\d+\s+(\d+)/
-  
-frontend-test:
-  stage: test
-  image: Dockerfile-playwright
-  script:
-    - buildscripts/frontend-testing.sh
-
+    - |
+      echo "{
+        \"auths\": {
+          \"${CI_REGISTRY}\": {
+            \"auth\": \"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"
+          }
+        }
+      }" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}:playwright-image${CI_COMMIT_TAG}"
+      
 build_docker_image_standalone: # cf. https://docs.gitlab.com/ci/docker/using_kaniko/
-  stage: docker-image-standalone
+  stage: build-docker
   image:
     name: gcr.io/kaniko-project/executor:v1.23.2-debug
     entrypoint: [""] # overwrite entrypoint ["/kaniko/executor"]
@@ -80,6 +61,44 @@ build_docker_image_standalone: # cf. https://docs.gitlab.com/ci/docker/using_kan
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile-standalone"
       --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}"
+
+release_build:
+  stage: build
+  image: ${CI_REGISTRY_IMAGE}:build-image${CI_COMMIT_TAG}
+  script:
+    - buildscripts/release.sh
+  artifacts:
+    paths:
+      - backend/builds/bin
+    
+debug_build:
+  stage: build
+  image: ${CI_REGISTRY_IMAGE}:build-image${CI_COMMIT_TAG}
+  script:
+    - buildscripts/debug.sh
+
+# Can't have multiple artifacts with the same path
+#coverage_build:
+#  stage: build
+#  image: #Dockerfile
+#  script:
+#    - buildscripts/coverage.sh
+#  artifacts:
+    
+# how to serve the html?
+
+test_and_coverage:
+  stage: test
+  image: ${CI_REGISTRY_IMAGE}:build-image${CI_COMMIT_TAG}
+  script:
+    - buildscripts/coverage.sh
+  coverage: /TOTAL\s+\d+\s+\d+\s+\d+\.\d+\%\s+\d+\s+\d+\s+(\d+)/
+  
+frontend-test:
+  stage: test
+  image: ${CI_REGISTRY_IMAGE}:playwright-image${CI_COMMIT_TAG}
+  script:
+    - buildscripts/frontend-testing.sh
 
 deploy_to_coolify:
   stage: deploy
