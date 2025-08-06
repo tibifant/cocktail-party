@@ -120,7 +120,7 @@ frontend-test:
     - buildscripts/frontend-testing.sh
 
 build_docker_image_standalone: # cf. https://docs.gitlab.com/ci/docker/using_kaniko/
-  stage: build-docker-standalone
+  stage: build-standalone-image
   image:
     name: gcr.io/kaniko-project/executor:v1.23.2-debug
     entrypoint: [""] # overwrite entrypoint ["/kaniko/executor"]
