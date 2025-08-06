@@ -6,8 +6,7 @@ stages:
   - deploy
 
 build-docker-build-image:
-build-docker-image:
-  stage: build
+  stage: build-docker
   image:
     name: gcr.io/kaniko-project/executor:v1.23.2-debug
     entrypoint: [""] # overwrite entrypoint ["/kaniko/executor"]
