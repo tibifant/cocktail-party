@@ -60,6 +60,9 @@ coverage_build:
 
 build-docker-test-image:
   stage: build-test-image
+  needs:
+    - job: coverage_build
+      artifacts: true
   image:
     name: gcr.io/kaniko-project/executor:v1.23.2-debug
     entrypoint: [""] # overwrite entrypoint ["/kaniko/executor"]
@@ -79,6 +82,9 @@ build-docker-test-image:
 
 build-docker-playwright-image:
   stage: build-test-image
+  needs: 
+    - job: release_build
+      artifacts: true
   image:
     name: gcr.io/kaniko-project/executor:v1.23.2-debug
     entrypoint: [""] # overwrite entrypoint ["/kaniko/executor"]
@@ -99,8 +105,6 @@ build-docker-playwright-image:
 test_and_coverage:
   stage: test
   needs:
-    - job: coverage_build
-      artifacts: true
     - job: build-docker-test-image
   image: ${CI_REGISTRY_IMAGE}/images:test-image${CI_COMMIT_TAG}
   script:
@@ -110,8 +114,6 @@ test_and_coverage:
 frontend-test:
   stage: test
   needs: 
-    - job: release_build
-      artifacts: true
     - job: build-docker-playwright-image
   image: ${CI_REGISTRY_IMAGE}/images:playwright-image${CI_COMMIT_TAG}
   script:
