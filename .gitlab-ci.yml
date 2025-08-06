@@ -1,12 +1,21 @@
 stages:
+  - build-docker
   - build
   - test
-  - build-docker
+  - docker-image-standalone
   - deploy
+
+build-docker-build-image:
+  stage: build-docker
+  image: docker:25.0.2
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t registry.coco.study/students/ss25/devops/mlindne2/toolbox/build-image .
+    - docker push registry.coco.study/students/ss25/devops/mlindne2/toolbox/build-image
 
 release_build:
   stage: build
-  image: #Dockerfile
+  image: registry.coco.study/students/ss25/devops/mlindne2/toolbox/build-image:latest
   script:
     - buildscripts/release.sh
   artifacts:
@@ -15,7 +24,7 @@ release_build:
     
 debug_build:
   stage: build
-  image: Dockerfile
+  image: registry.coco.study/students/ss25/devops/mlindne2/toolbox/build-image:latest
   script:
     - buildscripts/debug.sh
 
@@ -31,7 +40,7 @@ debug_build:
 
 test_and_coverage:
   stage: test
-  image: Dockerfile
+  image: registry.coco.study/students/ss25/devops/mlindne2/toolbox/build-image:latest
   script:
     - buildscripts/coverage.sh
   coverage: /TOTAL\s+\d+\s+\d+\s+\d+\.\d+\%\s+\d+\s+\d+\s+(\d+)/
@@ -43,7 +52,7 @@ frontend-test:
     - buildscripts/frontend-testing.sh
 
 build_docker_image_standalone: # cf. https://docs.gitlab.com/ci/docker/using_kaniko/
-  stage: build-docker
+  stage: docker-image-standalone
   image:
     name: gcr.io/kaniko-project/executor:v1.23.2-debug
     entrypoint: [""] # overwrite entrypoint ["/kaniko/executor"]
