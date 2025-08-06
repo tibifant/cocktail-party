@@ -34,7 +34,7 @@ test_and_coverage:
   image: Dockerfile
   script:
     - buildscripts/coverage.sh
-  coverage: TOTAL.*?(\d+\.\d+%)$
+  coverage: (?m)^TOTAL[^\n]*?(\d+\.\d+%)$
   
 frontend-test:
   stage: test
