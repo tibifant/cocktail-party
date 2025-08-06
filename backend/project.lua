@@ -6,8 +6,6 @@ project(ProjectName)
   language "C++"
   staticruntime "On"
 
-  dependson { "zydec", "execution-flow" }
-
   filter { "system:windows" }
     ignoredefaultlibraries { "msvcrt" }
   filter { "system:linux" }

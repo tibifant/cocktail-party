@@ -1,0 +1,70 @@
+stages:
+  - build
+  - test
+  - build-docker
+  - deploy
+
+release_build:
+  stage: build
+  image: #Dockerfile
+  script:
+    - buildscripts/release.sh
+  artifacts:
+    paths:
+      - backend/builds/bin
+    
+debug_build:
+  stage: build
+  image: #Dockerfile
+  script:
+    - buildscripts/debug.sh
+
+# Can't have multiple artifacts with the same path
+#coverage_build:
+#  stage: build
+#  image: #Dockerfile
+#  script:
+#    - buildscripts/coverage.sh
+#  artifacts:
+    
+# how to serve the html?
+
+test_and_coverage:
+  stage: build
+  image: #Dockerfile
+  script:
+    - buildscripts/coverage.sh
+  
+frontend-test:
+  stage: test
+  image: #Dockerfile-playwright
+  script:
+    - buildscripts/frontend-testing.sh
+  dependencies:
+    - build
+
+build_docker_image_standalone: # cf. https://docs.gitlab.com/ci/docker/using_kaniko/
+  stage: build-docker
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.2-debug
+    entrypoint: [""] # overwrite entrypoint ["/kaniko/executor"]
+  script:
+    - |
+      echo "{
+        \"auths\": {
+          \"${CI_REGISTRY}\": {
+            \"auth\": \"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"
+          }
+        }
+      }" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile-standalone"
+      --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}"
+
+deploy_to_coolify:
+  stage: deploy
+  image: curlimages/curl:8.13.0
+  script: 'curl --header "Authorization: Bearer ${COOLIFY_DEPLOY_API_TOKEN}" ${COOLIFY_DEPLOY_WEBHOOK_URL}'
+  rules:
+    - if: '$COOLIFY_DEPLOY_API_TOKEN && $COOLIFY_DEPLOY_WEBHOOK_URL'
