@@ -1,6 +1,7 @@
 stages:
   - build-docker
   - build
+  - build-docker-playwright
   - test
   - build-docker-standalone
   - deploy
@@ -24,25 +25,6 @@ build-docker-build-image:
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
       --destination "${CI_REGISTRY_IMAGE}/images:build-image${CI_COMMIT_TAG}"
 
-build-docker-playwright-image:
-  stage: build-docker
-  image:
-    name: gcr.io/kaniko-project/executor:v1.23.2-debug
-    entrypoint: [""] # overwrite entrypoint ["/kaniko/executor"]
-  script:
-    - |
-      echo "{
-        \"auths\": {
-          \"${CI_REGISTRY}\": {
-            \"auth\": \"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"
-          }
-        }
-      }" > /kaniko/.docker/config.json
-    - /kaniko/executor
-      --context "${CI_PROJECT_DIR}"
-      --dockerfile "${CI_PROJECT_DIR}/Dockerfile-playwright"
-      --destination "${CI_REGISTRY_IMAGE}/images:playwright-image${CI_COMMIT_TAG}"
-      
 release_build:
   stage: build
   image: ${CI_REGISTRY_IMAGE}/images:build-image${CI_COMMIT_TAG}
@@ -67,6 +49,25 @@ debug_build:
 #  artifacts:
     
 # how to serve the html?
+
+build-docker-playwright-image:
+  stage: build-docker-playwright
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.2-debug
+    entrypoint: [""] # overwrite entrypoint ["/kaniko/executor"]
+  script:
+    - |
+      echo "{
+        \"auths\": {
+          \"${CI_REGISTRY}\": {
+            \"auth\": \"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"
+          }
+        }
+      }" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile-playwright"
+      --destination "${CI_REGISTRY_IMAGE}/images:playwright-image${CI_COMMIT_TAG}"
 
 test_and_coverage:
   stage: test

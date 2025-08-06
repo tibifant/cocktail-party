@@ -26,27 +26,6 @@ body {
   border: 2pt solid #5553;
 }
 
-#header {
-  height: 25pt;
-  width: 100%;
-  background: #111;
-  display: block;
-}
-
-.app_view {
-  min-width: 200pt;
-  width: 30%;
-  height: 100%;
-  display: inline-block;
-  padding: 0;
-  margin: 0;
-  border: 0;
-  color: #aaa;
-  font-family: 'Consolas', monospace;
-  vertical-align: top;
-  background: #1e1e1e;
-}
-
 #app_container {
   color: #aaa;
   margin: 0;
@@ -55,11 +34,7 @@ body {
   height: calc(100% - 25pt);
   padding: 40pt 0;
   overflow: scroll;
-}
-
-#header img {
-  height: 23pt;
-  margin: 1pt 5pt;
+  font-family: 'Consolas', monospace;
 }
 
 div.box {
