@@ -32,4 +32,12 @@ On Linux:
 
 Queries will be processed on port 61919.
 
+## Build the container image
 
+Make sure docker is installed and running.
+
+- Run `docker build -t standalone -f Dockerfile-standalone .`
+
+## Run the container locally
+
+- Run `docker run -it standalone`
