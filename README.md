@@ -18,7 +18,6 @@ On windows:
 - Open the solution (coktail-party.sln) in Visual Studio 2022
 - Build the solution (Build > Build Solution)
 
-
 On Linux:
 - Run buildscripts/debug.sh (Debug) / buildscripts/release.sh (Release)
 
@@ -41,3 +40,7 @@ Make sure docker is installed and running.
 ## Run the container locally
 
 - Run `docker run -it standalone`
+
+## Find the website
+
+Open [mlindne2-toolbox.rewoit.de/](https://mlindne2-toolbox.rewoit.de/)
