@@ -40,8 +40,6 @@ frontend-test:
   image: #Dockerfile-playwright
   script:
     - buildscripts/frontend-testing.sh
-  dependencies:
-    - build
 
 build_docker_image_standalone: # cf. https://docs.gitlab.com/ci/docker/using_kaniko/
   stage: build-docker
