@@ -9,7 +9,7 @@ build-docker-build-image:
   stage: build-docker
   image: docker:25.0.2
   script:
-    - docker login registry.coco.study -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD 
     - docker build -t registry.coco.study/students/ss25/devops/mlindne2/toolbox/build-image .
     - docker push registry.coco.study/students/ss25/devops/mlindne2/toolbox/build-image
 
