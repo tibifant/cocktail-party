@@ -1,15 +1,5 @@
 #!
 
-echo "Generating Project Files..."
-premake/premake5 gmake2 --test-coverage
-if [ $? -ne 0 ]; then exit 1; fi
-
-echo "Building Debug..."
-make clean
-if [ $? -ne 0 ]; then exit 1; fi
-config=debugclang_x64 make
-if [ $? -ne 0 ]; then exit 1; fi
-
 echo "Running Tests, Generating Coverage..."
 LLVM_PROFILE_FILE="./backend/builds/bin/coverage.profraw" backend/builds/bin/cocktail-party --run-tests
 if [ $? -ne 0 ]; then exit 1; fi

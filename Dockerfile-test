@@ -9,10 +9,11 @@ RUN apt install -y libasio-dev
 
 WORKDIR /app
 
+COPY backend/builds/bin ./backend/builds/bin
 COPY backend/src ./backend/src
 COPY backend/3rdParty ./backend/3rdParty
 COPY backend/project.lua ./backend/project.lua
-COPY buildscripts ./buildscripts
+COPY buildscripts/coverage.sh ./buildscripts/coverage.sh
 COPY premake ./premake
 COPY premake5.lua .
 

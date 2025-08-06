@@ -1,13 +1,13 @@
 stages:
-  - build-docker
+  - build-image
   - build
-  - build-docker-playwright
+  - build-test-image
   - test
-  - build-docker-standalone
+  - build-standalone-image
   - deploy
 
 build-docker-build-image:
-  stage: build-docker
+  stage: build-image
   image:
     name: gcr.io/kaniko-project/executor:v1.23.2-debug
     entrypoint: [""] # overwrite entrypoint ["/kaniko/executor"]
@@ -39,6 +39,18 @@ debug_build:
   image: ${CI_REGISTRY_IMAGE}/images:build-image${CI_COMMIT_TAG}
   script:
     - buildscripts/debug.sh
+  artifacts:
+    paths:
+      - backend/builds/bin
+
+coverage_build:
+  stage: build
+  image: ${CI_REGISTRY_IMAGE}/images:build-image${CI_COMMIT_TAG}
+  script:
+    - buildscripts/coverage-build.sh
+  artifacts:
+    paths:
+      - backend/builds/bin
 
 # Can't have multiple artifacts with the same path
 #coverage_build:
@@ -50,8 +62,27 @@ debug_build:
     
 # how to serve the html?
 
+build-docker-test-image:
+  stage: build-test-image
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.2-debug
+    entrypoint: [""] # overwrite entrypoint ["/kaniko/executor"]
+  script:
+    - |
+      echo "{
+        \"auths\": {
+          \"${CI_REGISTRY}\": {
+            \"auth\": \"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"
+          }
+        }
+      }" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile-test"
+      --destination "${CI_REGISTRY_IMAGE}/images:test-image${CI_COMMIT_TAG}"
+
 build-docker-playwright-image:
-  stage: build-docker-playwright
+  stage: build-test-image
   image:
     name: gcr.io/kaniko-project/executor:v1.23.2-debug
     entrypoint: [""] # overwrite entrypoint ["/kaniko/executor"]
@@ -71,13 +102,19 @@ build-docker-playwright-image:
 
 test_and_coverage:
   stage: test
-  image: ${CI_REGISTRY_IMAGE}/images:build-image${CI_COMMIT_TAG}
+  needs:
+    - job: coverage_build
+      artifacts: true
+  image: ${CI_REGISTRY_IMAGE}/images:test-image${CI_COMMIT_TAG}
   script:
     - buildscripts/coverage.sh
   coverage: /TOTAL\s+\d+\s+\d+\s+\d+\.\d+\%\s+\d+\s+\d+\s+(\d+)/
   
 frontend-test:
   stage: test
+  needs:
+    - job: release_build
+      artifacts: true
   image: ${CI_REGISTRY_IMAGE}/images:playwright-image${CI_COMMIT_TAG}
   script:
     - buildscripts/frontend-testing.sh
