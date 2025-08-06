@@ -15,7 +15,7 @@ release_build:
     
 debug_build:
   stage: build
-  image: #Dockerfile
+  image: Dockerfile
   script:
     - buildscripts/debug.sh
 
@@ -30,14 +30,15 @@ debug_build:
 # how to serve the html?
 
 test_and_coverage:
-  stage: build
-  image: #Dockerfile
+  stage: test
+  image: Dockerfile
   script:
     - buildscripts/coverage.sh
+  coverage: TOTAL.*?(\d+\.\d+%)$
   
 frontend-test:
   stage: test
-  image: #Dockerfile-playwright
+  image: Dockerfile-playwright
   script:
     - buildscripts/frontend-testing.sh
 
