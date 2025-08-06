@@ -34,7 +34,7 @@ test_and_coverage:
   image: Dockerfile
   script:
     - buildscripts/coverage.sh
-  coverage: TOTAL\s+\d+\s+\d+\s+\d+\.\d+\%\s+\d+\s+\d+\s+(\d+)
+  coverage: /TOTAL\s+\d+\s+\d+\s+\d+\.\d+\%\s+\d+\s+\d+\s+(\d+)/
   
 frontend-test:
   stage: test
