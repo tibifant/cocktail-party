@@ -12,7 +12,7 @@ WORKDIR /app
 COPY backend/src ./backend/src
 COPY backend/3rdParty ./backend/3rdParty
 COPY backend/project.lua ./backend/project.lua
-COPY buildscripts ./buildscripts
+COPY buildscripts/release.sh ./buildscripts/release.sh
 COPY premake ./premake
 COPY premake5.lua .
 
