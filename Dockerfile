@@ -12,7 +12,8 @@ WORKDIR /app
 COPY backend/src ./backend/src
 COPY backend/3rdParty ./backend/3rdParty
 COPY backend/project.lua ./backend/project.lua
-COPY buildscripts ./buildscripts
+COPY --chmod=755 buildscripts/release.sh ./buildscripts/release.sh
+COPY --chmod=755 buildscripts/debug.sh ./buildscripts/debug.sh
 COPY premake ./premake
 COPY premake5.lua .
 
