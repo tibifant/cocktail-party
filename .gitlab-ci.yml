@@ -27,6 +27,8 @@ build-docker-build-image:
 
 release_build:
   stage: build
+  needs:
+    - job: build-docker-build-image
   image: ${CI_REGISTRY_IMAGE}/images:build-image${CI_COMMIT_TAG}
   script:
     - buildscripts/release.sh
@@ -36,6 +38,8 @@ release_build:
     
 debug_build:
   stage: build
+  needs:
+    - job: build-docker-build-image
   image: ${CI_REGISTRY_IMAGE}/images:build-image${CI_COMMIT_TAG}
   script:
     - buildscripts/debug.sh
@@ -45,22 +49,14 @@ debug_build:
 
 coverage_build:
   stage: build
+  needs:
+    - job: build-docker-build-image
   image: ${CI_REGISTRY_IMAGE}/images:build-image${CI_COMMIT_TAG}
   script:
     - buildscripts/coverage-build.sh
   artifacts:
     paths:
       - backend/builds/bin
-
-# Can't have multiple artifacts with the same path
-#coverage_build:
-#  stage: build
-#  image: #Dockerfile
-#  script:
-#    - buildscripts/coverage.sh
-#  artifacts:
-    
-# how to serve the html?
 
 build-docker-test-image:
   stage: build-test-image

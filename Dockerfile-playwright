@@ -5,7 +5,7 @@ RUN apt install -y tmux npm
 
 WORKDIR /app
 RUN npm update
-RUN npm install -D @playwright/test@1.54.1
+RUN npm install -D playwright@1.54.2
 RUN npx playwright install-deps
 RUN npx playwright install chromium
 
@@ -13,7 +13,6 @@ RUN npx playwright install chromium
 COPY backend/builds/bin/cocktail-party ./backend/builds/bin/.
 COPY frontend ./frontend
 COPY buildscripts/frontend-testing.sh ./buildscripts/frontend-testing.sh
-COPY frontend-tests/tests ./frontend-tests/tests
-COPY frontend-tests/playwright.config.ts .
+COPY frontend-tests ./frontend-tests
 
 CMD ["/bin/bash"]
