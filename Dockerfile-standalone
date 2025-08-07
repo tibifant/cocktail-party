@@ -1,10 +1,8 @@
 FROM amd64/ubuntu:noble AS buildstage
 
 RUN apt update
-RUN apt install -y llvm-18 clang-18 build-essential
+RUN apt install -y clang-18 build-essential
 RUN update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
-RUN update-alternatives --install /usr/bin/llvm-profdata llvm-profdata /usr/bin/llvm-profdata-18 100 && \
-update-alternatives --install /usr/bin/llvm-cov llvm-cov /usr/bin/llvm-cov-18 100
 RUN apt install -y libasio-dev
 
 WORKDIR /app
@@ -19,21 +17,21 @@ COPY premake5.lua .
 # for other stage
 COPY buildscripts/start-server.sh ./buildscripts/start-server.sh
 COPY frontend .
+COPY etc .
 
 RUN buildscripts/release.sh
 
 FROM amd64/ubuntu:noble
 
 RUN apt update
-RUN apt install -y libasio-dev nginx 
-#tmux
+RUN apt install -y nginx
 
 WORKDIR /app
 
 COPY --from=buildstage /app/backend/builds/bin/cocktail-party .
 COPY buildscripts/start-server.sh ./buildscripts/start-server.sh
 COPY frontend .
-#COPY nginx file 
+COPY etc .
 
 EXPOSE 61919/tcp
 
