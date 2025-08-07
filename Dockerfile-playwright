@@ -3,7 +3,7 @@ FROM amd64/ubuntu:noble
 RUN apt update
 RUN apt install -y tmux npm
 
-WORKDIR /app
+WORKDIR /install
 RUN npm update
 RUN npm ci || npm install
 RUN npm install -D @playwright/test@1.54.2
@@ -14,6 +14,7 @@ RUN npx playwright install chromium
 RUN echo "current dir:"
 RUN ls
 
+WORKDIR /app
 # Copy artifact
 COPY backend/builds/bin/cocktail-party ./backend/builds/bin/.
 COPY frontend ./frontend
