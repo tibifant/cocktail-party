@@ -16,6 +16,10 @@ COPY buildscripts/release.sh ./buildscripts/release.sh
 COPY premake ./premake
 COPY premake5.lua .
 
+# for other stage
+COPY buildscripts/start-server.sh ./buildscripts/start-server.sh
+COPY frontend .
+
 RUN buildscripts/release.sh
 
 FROM amd64/ubuntu:noble
