@@ -9,6 +9,8 @@ RUN npm install -D playwright@1.54.2
 RUN npx playwright install-deps
 RUN npx playwright install chromium
 
+RUN npx playwright --version
+
 # Copy artifact
 COPY backend/builds/bin/cocktail-party ./backend/builds/bin/.
 COPY frontend ./frontend
