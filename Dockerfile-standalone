@@ -21,14 +21,16 @@ RUN buildscripts/release.sh
 FROM amd64/ubuntu:noble
 
 RUN apt update
-RUN apt install -y libasio-dev nginx tmux
+RUN apt install -y libasio-dev nginx 
+#tmux
 
 WORKDIR /app
 
 COPY --from=buildstage /app/backend/builds/bin/cocktail-party .
+COPY buildscripts/start-server.sh ./buildscripts/start-server.sh
 COPY frontend .
 #COPY nginx file 
 
 EXPOSE 61919/tcp
 
-CMD ["./cocktail-party"]
+CMD ["./buildscripts/start-server.sh"]
