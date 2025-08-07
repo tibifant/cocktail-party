@@ -5,7 +5,7 @@ echo "ls frontend-tests"
 ls frontend-tests
 echo "ls frontend-tests/tests"
 ls frontend-tests/tests
-
+echo "playwright version"
 npx playwright --version
 
 
