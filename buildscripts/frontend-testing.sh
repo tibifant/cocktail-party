@@ -1,13 +1,9 @@
 #!
-echo "ls"
-ls
-echo "ls frontend-tests"
-ls frontend-tests
-echo "ls frontend-tests/tests"
-ls frontend-tests/tests
-echo "playwright version"
-npx playwright --version
-
+echo "Installing playwright..."
+npm init -y
+npm install -D @playwright/test@1.54.2
+npx playwright install-deps
+npx playwright install chromium
 
 echo "Running frontend Tests..."
 tmux new-session -d -s server-session 'backend/builds/bin/cocktail-party --run-frontend-tests'

@@ -7,6 +7,10 @@ Cocktail Party has your back!
 - Add new cocktails to your collection.
 - Edit and Remove the one's that don't strike your taste.
 
+## Find the website
+
+Open [mlindne2-toolbox.rewoit.de/](https://mlindne2-toolbox.rewoit.de/)
+
 ## Run the application locally
 
 Clone this repository.
@@ -31,6 +35,10 @@ On Linux:
 
 Queries will be processed on port 61919.
 
+For testing:
+- Backend: Run the application with `--run-tests`.
+- End-to-End: Install playwright, then run the application with `--run-frontend-tests` and run `npx playwright test`.
+
 ## Build the container image
 
 Make sure docker is installed and running.
@@ -40,7 +48,3 @@ Make sure docker is installed and running.
 ## Run the container locally
 
 - Run `docker run -it standalone`
-
-## Find the website
-
-Open [mlindne2-toolbox.rewoit.de/](https://mlindne2-toolbox.rewoit.de/)
