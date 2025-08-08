@@ -107,7 +107,7 @@
   }
 
   function handle_remove() {
-    if (__id > 0)
+    if (__id > -1)
       load_backend_url('remove', reset_view, { id : __id }, on_failure);
   }
 
