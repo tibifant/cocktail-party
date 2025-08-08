@@ -16,7 +16,7 @@ COPY premake5.lua .
 
 # for other stage
 COPY buildscripts/start-server.sh ./buildscripts/start-server.sh
-COPY frontend .
+COPY frontend ./frontend
 COPY etc .
 
 RUN buildscripts/release.sh
@@ -30,9 +30,10 @@ WORKDIR /app
 
 COPY --from=buildstage /app/backend/builds/bin/cocktail-party .
 COPY buildscripts/start-server.sh ./buildscripts/start-server.sh
-COPY frontend .
-COPY etc .
+COPY frontend ./frontend
+COPY etc ./etc
 
 EXPOSE 61919/tcp
 
-CMD ["./buildscripts/start-server.sh"]
+#CMD ["./buildscripts/start-server.sh"]
+CMD ["/bin/bash"]

@@ -55,11 +55,12 @@ test.describe('Cocktail Party App', () => {
   });
 
   test('remove cocktail', async ({ page }) => {
-    const addButton = page.locator('#add');
-    await addButton.click();
+    const firstCocktail = page.locator('#list li').first();
+    await firstCocktail.click();
 
-    // Get the title of the new cocktail
+    // Get the title of the cocktail
     const title = await page.locator('#title').textContent();
+    await expect(title).not.toHaveText(''); // To catch error with missing title early.
 
     const removeButton = page.locator('#remove');
     await removeButton.click();

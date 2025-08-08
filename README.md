@@ -17,12 +17,14 @@ Clone this repository.
 
 ### How to build the project:
 
-On windows:
+Dependency: [asio](https://think-async.com/Asio/) (Install package on Linux: `sudo apt install asio`)
+
+On Windows:
 - Run create_project.bat
 - Open the solution (coktail-party.sln) in Visual Studio 2022
 - Build the solution (Build > Build Solution)
 
-On Linux:
+On Linux (clang-18):
 - Run buildscripts/debug.sh (Debug) / buildscripts/release.sh (Release)
 
 ### How to run the server:
@@ -37,7 +39,7 @@ Queries will be processed on port 61919.
 
 For testing:
 - Backend: Run the application with `--run-tests`.
-- End-to-End: Install playwright, then run the application with `--run-frontend-tests` and run `npx playwright test`.
+- End-to-End: Install [playwright](https://playwright.dev/docs/intro#installing-playwright), then run the application with `--run-frontend-tests` and run `npx playwright test`.
 
 ## Build the container image
 
