@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "Start nginx..."
+echo "Starting nginx..."
 nginx
 ps -ax | grep nginx
-echo "Start server..."
+echo "Starting server..."
 ./cocktail-party
