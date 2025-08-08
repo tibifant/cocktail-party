@@ -23,7 +23,7 @@
   </div>
 
 <script>
-  const server_url = document.location.hostname == 'localhost' ? 'http://localhost:61919/' : 'https://mlindne2-toolbox.rewoit.de/api/';
+  const server_url = document.location.hostname == 'localhost' || document.location.hostname == '' ? 'http://localhost:61919/' : '/api/';
 
   function load_url(url, callback, payload, failure_callback) {
     var xmlhttp;

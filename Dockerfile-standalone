@@ -15,9 +15,8 @@ COPY premake ./premake
 COPY premake5.lua .
 
 # for other stage
-#COPY buildscripts/start-server.sh ./buildscripts/start-server.sh
 COPY frontend ./frontend
-COPY etc .
+COPY etc ./etc
 
 RUN buildscripts/release.sh
 
@@ -29,12 +28,9 @@ RUN apt install -y nginx
 WORKDIR /app
 
 COPY --from=buildstage /app/backend/builds/bin/cocktail-party .
-#COPY buildscripts/start-server.sh ./buildscripts/start-server.sh
 COPY frontend ./frontend
 COPY etc/nginx/nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 61919/tcp
 
 CMD nginx && ./cocktail-party
-#CMD ./buildscripts/start-server.sh 
-#CMD ["/bin/bash"]
