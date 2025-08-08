@@ -60,6 +60,7 @@ test.describe('Cocktail Party App', () => {
 
     // Get the title of the cocktail
     const title = await page.locator('#title').textContent();
+    const t = await page.locator('#title');
     await expect(title).not.toHaveText(''); // To catch error with missing title early.
 
     const removeButton = page.locator('#remove');
