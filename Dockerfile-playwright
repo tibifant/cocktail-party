@@ -1,7 +1,7 @@
 FROM amd64/ubuntu:noble
 
 RUN apt update
-RUN apt install -y tmux npm nginx
+RUN apt install -y tmux npm
 
 WORKDIR /app
 
@@ -11,6 +11,5 @@ COPY backend/builds/bin/cocktail-party ./backend/builds/bin/.
 COPY frontend ./frontend
 COPY buildscripts/frontend-testing.sh ./buildscripts/frontend-testing.sh
 COPY frontend-tests ./frontend-tests
-COPY etc/nginx/nginx.conf /etc/nginx/nginx.conf
 
 CMD ["/bin/bash"]
