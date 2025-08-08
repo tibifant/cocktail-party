@@ -57,16 +57,16 @@ test.describe('Cocktail Party App', () => {
   test('remove cocktail', async ({ page }) => {
     const firstCocktail = page.locator('#list li').first();
     await firstCocktail.click();
-
-    // Get the title of the cocktail
-    const title = await page.locator('#title').textContent();
-    const t = await page.locator('#title');
-    await expect(t).not.toHaveText(''); // To catch error with missing title early.
-
+  
+    // Wait for title to be populated before reading it
+    const titleLocator = page.locator('#title');
+    await expect(titleLocator).not.toHaveText('');
+    const title = await titleLocator.textContent();
+  
     const removeButton = page.locator('#remove');
     await removeButton.click();
-
-    // Verify it's removed from the list
+  
+    // Wait for the list to update after removal
     await expect(page.locator(`#list li:has-text("${title}")`)).toHaveCount(0);
   });
 });
