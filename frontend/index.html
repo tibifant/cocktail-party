@@ -177,7 +177,6 @@
     const t = (Date.now() - start) * 0.001;
     const t_scaled = Math.min(t, 200);
     const t_timeScaled = Math.max(1000 - t, 300);
-    console.log(t);
 
     const idx = Math.floor(Math.random() * list.length);
     let elem = list[idx];
@@ -201,7 +200,7 @@
 
   function setup() {
     const audio = document.getElementById('audio');
-    audio.addEventListener("playing", () => {
+    audio.addEventListener("play", () => {
       start = Date.now();
       if (!playedOnce) {
         playedOnce = true;
