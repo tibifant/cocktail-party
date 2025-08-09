@@ -23,6 +23,9 @@
     </box>
   </div>
 
+  <audio loop id="audio">
+    <source src="assets/cocktail-song.mp3" type="audio/mpeg">
+  </audio>
 <script>
   const server_url = document.location.hostname == 'localhost' || document.location.hostname == '' ? 'http://localhost:61919/' : '/api/';
 
@@ -90,7 +93,7 @@
   let __id = -1;
   
   function on_failure() {
-    alert('Failure when loading backend URL.');
+    alert('An Error occured.');
   }
 
   function on_add(payload) {
@@ -151,7 +154,68 @@
     load_backend_url('get_list', generate_list, {}, on_failure);
   }
 
+  ///////////////////////////////////////////////////////////
+  
+  function getChildren(parent, list) {
+    for (e of parent.children) {
+      if (e.nodeName != "SCRIPT") {
+        getChildren(e, list);
+        list.push(e);
+      }
+    }
+
+    return;
+  }
+  
+  let start = 0;
+
+  function shuffleElements() {
+    let list = [];
+
+    getChildren(document.body, list);
+
+    const t = (Date.now() - start) * 0.001;
+    const t_scaled = Math.min(t, 200);
+    const t_timeScaled = Math.max(1000 - t, 300);
+    console.log(t);
+
+    const idx = Math.floor(Math.random() * list.length);
+    let elem = list[idx];
+    const x = Math.floor(Math.random() * t_scaled - (t_scaled * 0.5));
+    const y = Math.floor(Math.random() * 8 - 4);
+    elem.style.transform = "translate(" + x + "pt, " + y + "pt)";
+
+    setTimeout(shuffleElements, t_timeScaled);
+  }
+
+  function changeColor() {
+    const c = ["#383401", "#293801", "#173801", "#01381c", "#013832", "#012a38", "#011438", "#0f0138", "#240138", "#380132", "#380120", "#38010f", "#380101", "#381d01"];
+    document.body.style.background = c[Math.floor(Math.random() * c.length)];
+
+    setTimeout(changeColor, 610);
+  }
+
+  ///////////////////////////////////////////////////////////
+
+  let playedOnce = false;
+
   function setup() {
+    const audio = document.getElementById('audio');
+    audio.addEventListener("playing", () => {
+      start = Date.now();
+      if (!playedOnce) {
+        playedOnce = true;
+        setTimeout(shuffleElements, 15000);
+        setTimeout(changeColor, 120000);
+      }
+    })
+
+    audio.play().catch(() => {
+      document.addEventListener('click', () => {
+        audio.play();
+      }, { once: true });
+    });
+
     document.getElementById('add').onclick = handle_add;
     document.getElementById('update').onclick = handle_update;
     document.getElementById('remove').onclick = handle_remove ;
