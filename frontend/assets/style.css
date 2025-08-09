@@ -1,9 +1,9 @@
 html,
 body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  overflow: hidden;
+  color: #aaa;
+  margin: 50pt auto;
+  background: #1a1a1a;
+  font-family: 'Consolas', monospace;
 }
 
 * {
@@ -27,27 +27,46 @@ body {
 }
 
 #app_container {
-  color: #aaa;
-  margin: 0;
-  background: #1a1a1a;
-  width: 100vw;
-  height: calc(100% - 25pt);
-  padding: 40pt 0;
-  overflow: scroll;
-  font-family: 'Consolas', monospace;
+  margin: 5pt auto;
+  max-width: 80%;
+  width: 1000pt;
+  min-width: 500pt;
+}
+
+ul {
+  cursor: pointer;
+  list-style-type: none;
+}
+
+ul:hover, ul:active {
+  color: #fff;
+  text-decoration: underline;
 }
 
 div.box {
+  margin: 20pt 0;
   display: block;
-  margin: 50pt auto;
-  max-width: 800pt;
-  width: 70%;
   background: #333;
-  padding: 40pt 80pt;
+  padding: 16pt;
   color: #fff;
-  font-family: 'Segoe UI', sans-serif;
 }
 
-li.selected {
-  color: #a8a8a8
+button {
+  background-color: #666;
+  border-radius: 5pt;
+  padding: 4pt 8pt;
+  color: #ddd;
+  border: none;
+  font-family: 'Consolas', monospace;
+  font-size: 100%;
+  margin-top: 6pt;
+}
+
+button:hover, button:active {
+  background-color: #888;
+  color: #fff;
+}
+
+h3 {
+  margin-top: 0;
 }

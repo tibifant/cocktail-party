@@ -11,10 +11,10 @@
 
 <body>
   <div id="app_container">
-    <h2>Cocktail Party</h2>
-    <button id="add">Add cocktail</button>
+    <h2>🍹🍸Cocktail Party🍸🍹</h2>
     <ul id="list"></ul>
-    <box>
+    <button id="add">Add cocktail</button>
+    <div class="box">
       <h3 id="title"></h3>
       <p id="author"></p>
       <p id="instructions"></p>
@@ -127,6 +127,9 @@
   function generate_list(payload) {
     let list = document.getElementById('list');
     list.innerHTML = '';
+    
+    if (payload == null)
+      return;
 
     for (e of payload) {
       let elem = append_element(list, 'li', 'list_button');
