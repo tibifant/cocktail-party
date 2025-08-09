@@ -14,6 +14,7 @@
     <h2>🍹🍸Cocktail Party🍸🍹</h2>
     <ul id="list"></ul>
     <button id="add">Add cocktail</button>
+    <button id="vol">Volume</button>
     <div class="box">
       <h3 id="title"></h3>
       <p id="author"></p>
@@ -184,14 +185,30 @@
     const y = Math.floor(Math.random() * 8 - 4);
     elem.style.transform = "translate(" + x + "pt, " + y + "pt)";
 
+    const f = ["inherit", "'Comic Sans MS', sans-serif", "'webdings'"];
+
+    if (t > 220)
+      elem.style.fontFamily = f[Math.floor(Math.random() * f.length)];
+
+    let buttons = document.getElementsByTagName("button");
+    for (b of buttons) {
+      b.style.setProperty('--x', t * -0.2 + 'pt');
+      b.style.setProperty('--y', t * -0.2 * 0.5 + 'pt');
+    }
     setTimeout(shuffleElements, t_timeScaled);
   }
 
+  const c = ["#383401", "#293801", "#173801", "#01381c", "#013832", "#012a38", "#011438", "#0f0138", "#240138", "#380132", "#380120", "#38010f", "#380101", "#381d01"];
+  
   function changeColor() {
-    const c = ["#383401", "#293801", "#173801", "#01381c", "#013832", "#012a38", "#011438", "#0f0138", "#240138", "#380132", "#380120", "#38010f", "#380101", "#381d01"];
     document.body.style.background = c[Math.floor(Math.random() * c.length)];
-
     setTimeout(changeColor, 610);
+  }
+
+  function fullPartyMode() {
+    document.getElementsByClassName("box")[0].style.background = c[Math.floor(Math.random() * c.length)];
+    document.body.style.filter = document.body.style.filter == "" ? "invert()" : "";
+    setTimeout(fullPartyMode, 610);
   }
 
   ///////////////////////////////////////////////////////////
@@ -206,6 +223,8 @@
         playedOnce = true;
         setTimeout(shuffleElements, 15000);
         setTimeout(changeColor, 120000);
+        setTimeout(fullPartyMode, 227000);
+        setTimeout(() => { document.getElementById("vol").style.display = "block"; }, 230000);
       }
     })
 

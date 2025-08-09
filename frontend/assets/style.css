@@ -1,7 +1,6 @@
-html,
 body {
   color: #aaa;
-  margin: 50pt auto;
+  margin: 0;
   background: #1a1a1a;
   font-family: 'Consolas', monospace;
 }
@@ -27,7 +26,7 @@ body {
 }
 
 #app_container {
-  margin: 5pt auto;
+  margin: 50pt auto;
   max-width: 80%;
   width: 1000pt;
   min-width: 500pt;
@@ -38,7 +37,7 @@ ul {
   list-style-type: none;
 }
 
-ul:hover, ul:active {
+li:hover, li:active {
   color: #fff;
   text-decoration: underline;
 }
@@ -60,11 +59,20 @@ button {
   font-family: 'Consolas', monospace;
   font-size: 100%;
   margin-top: 6pt;
+  --x: 0;
+  --y: 0;
 }
 
 button:hover, button:active {
   background-color: #888;
   color: #fff;
+  translate: var(--x) var(--y);
+}
+
+#vol {
+  display: none;
+  translate: 600pt -70pt;
+  rotate: 5deg;
 }
 
 h3 {
