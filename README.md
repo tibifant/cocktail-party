@@ -13,21 +13,19 @@ Open [mlindne2-toolbox.rewoit.de/](https://mlindne2-toolbox.rewoit.de/)
 
 ## Run the application locally
 
-Clone this repository.
+### Build the application:
 
-### How to build the project:
-
-Dependency: [asio](https://think-async.com/Asio/) (Install package on Linux: `sudo apt install asio`)
+Dependency: [asio](https://think-async.com/Asio/) (on Linux: `sudo apt install asio`)
 
 On Windows:
 - Run create_project.bat
-- Open the solution (coktail-party.sln) in Visual Studio 2022
+- Open the solution (cocktail-party.sln) in Visual Studio 2022
 - Build the solution (Build > Build Solution)
 
 On Linux (clang-18):
 - Run buildscripts/debug.sh (Debug) / buildscripts/release.sh (Release)
 
-### How to run the server:
+### Run the application:
 
 On windows:
 - Execute builds/bin/cocktail-partyD.exe (Debug) / builds/bin/cocktail-party.exe (Release)
